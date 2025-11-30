@@ -1,6 +1,6 @@
 <?php
-// Redirect to homepage
-header("Location: landing.html");
+// Redirect to landingpage/homepage
+header("Location: LandingPages/landing.html");
 exit();
 ?>
 
