@@ -11,7 +11,7 @@ body{
     min-height: 100vh;
    
     /*Adding a gradient background for depth to create a modern look */
-    background: linear-gradient(135deg, #8672FF 0%, #6B5CE6 50%, #5A4FCF 100%);
+    background: linear-gradient(135deg, #8672FF );
     display: flex;
     align-items: center;
     justify-content: center;
