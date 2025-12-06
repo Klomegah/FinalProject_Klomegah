@@ -52,7 +52,7 @@ body{
     background-color: var(--bg-off-white);
     color: var(--text-color);
     line-height: 1.6;
-    overflow: hidden;
+    overflow-x: hidden;
     font-size: 12pt;
 }
 
@@ -66,7 +66,7 @@ body{
 /* Navigation Bar */
 
 .navbar{
-    display: fixed;
+    position: fixed;
     top:0;
     left: 0;
     right:0;
@@ -76,7 +76,7 @@ body{
     border-bottom: 1px solid var(--border-light);
     z-index: 1000;
     padding: var(--spacing-sm) 0;
-    transition: all var(--transition-normal);
+    transition: all var(--transition-medium);
 
 }
 
@@ -131,7 +131,7 @@ body{
     font-weight: 600;
     text-decoration: none;
     display: inline-block;
-    transition: all var(--transition-normal);
+    transition: all var(--transition-medium);
     border: none;
     cursor: pointer;
     font-size: 1rem;
@@ -409,7 +409,7 @@ body{
     background: var(--bg-white);
     padding: var(--spacing-lg);
     border-radius: 20px;
-    transition: all var(--transition-normal);
+    transition: all var(--transition-medium);
     border: 1px solid var(--border-light);
     position: relative;
     overflow: hidden;
@@ -424,7 +424,7 @@ body{
     height: 3px;
     background: linear-gradient(90deg, var(--primary-purple), var(--primary-purple-light));
     transform: scaleX(0);
-    transition: transform var(--transition-normal);
+    transition: transform var(--transition-medium);
 }
 
 .feature-card:hover::before {
@@ -441,7 +441,7 @@ body{
     font-size: 3rem;
     margin-bottom: var(--spacing-sm);
     display: inline-block;
-    transition: transform var(--transition-normal);
+    transition: transform var(--transition-medium);
 }
 
 .feature-card:hover .feature-icon {
@@ -503,7 +503,7 @@ body{
 .step {
     text-align: center;
     padding: var(--spacing-md);
-    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    transition: transform var(--transition-medium), box-shadow var(--transition-medium);
     border-radius: 16px;
 }
 
@@ -529,7 +529,7 @@ body{
     font-size: 1.5rem;
     font-weight: 700;
     margin: 0 auto var(--spacing-sm);
-    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    transition: transform var(--transition-medium), box-shadow var(--transition-medium);
 }
 
 .step-title {
@@ -579,7 +579,7 @@ body{
 .faq-icon {
     font-size: 1.5rem;
     font-weight: 300;
-    transition: transform var(--transition-normal);
+    transition: transform var(--transition-medium);
 }
 
 .faq-item.active .faq-icon {
@@ -589,7 +589,7 @@ body{
 .faq-answer {
     max-height: 0;
     overflow: hidden;
-    transition: max-height var(--transition-normal), padding var(--transition-normal);
+    transition: max-height var(--transition-medium), padding var(--transition-medium);
     color: var(--text-medium);
     line-height: 1.7;
 }
