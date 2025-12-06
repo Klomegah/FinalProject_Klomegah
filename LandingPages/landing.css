@@ -401,8 +401,7 @@ body{
 /*    HOW IT WORKS SECTION     */
 .how-it-works {
     padding: var(--spacing-xl) 0;
-    background: var(--bg-white);
-    position: relative;
+    background: var(--bg-off-white);
 }
 
 .steps-container {
@@ -440,35 +439,14 @@ body{
 
 .step {
     text-align: center;
-    padding: var(--spacing-lg);
-    transition: all var(--transition-medium);
-    border-radius: 20px;
-    background: var(--bg-white);
-    border: 1px solid var(--border-light);
-    position: relative;
-    overflow: hidden;
-}
-
-.step::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary-purple), var(--primary-purple-light));
-    transform: scaleX(0);
-    transition: transform var(--transition-medium);
-}
-
-.step:hover::before {
-    transform: scaleX(1);
+    padding: var(--spacing-md);
+    transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+    border-radius: 16px;
 }
 
 .step:hover {
     transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(134, 114, 255, 0.1);
-    border-color: var(--primary-purple);
+    box-shadow: 0 12px 24px rgba(134, 114, 255, 0.15);
 }
 
 .step:hover .step-number {
