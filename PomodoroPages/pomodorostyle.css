@@ -40,9 +40,7 @@ body {
     align-items: stretch;
 }
 
-/* 
-   TIMER SECTION (LEFT)
-     */
+/*  TIMER SECTION (LEFT)     */
 .timer-section {
     flex: 1;
     display: flex;
@@ -110,8 +108,6 @@ body {
     line-height: 1;
 }
 
-
-
 .button-wrapper {
     display: flex;
     gap: 1.5em;
@@ -148,23 +144,9 @@ body {
     transform: translateY(0);
 }
 
-#stop-btn:hover {
-    background-color: #dc2626;
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
-}
 
-#reset-btn {
-    background-color: #6B6B6B;
-}
+/* TASKS SECTION (RIGHT) */
 
-#reset-btn:hover {
-    background-color: #4A4A4A;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* 
-   TASKS SECTION (RIGHT)
-     */
 .tasks-section {
     width: 350px;
     background: var(--base-color);
@@ -273,105 +255,10 @@ body {
     box-shadow: 0 0 5px var(--accent-color);
 }
 
-/* 
-   MUSIC PLAYER (BOTTOM)
-     */
-.music-player {
-    background: var(--base-color);
-    border-top: 2px solid var(--input-color);
-    padding: 0.75rem 2rem;
-    box-shadow: 0 -4px 20px rgba(134, 114, 255, 0.1);
-    flex-shrink: 0;
-}
 
-.music-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-    max-width: 1200px;
-    margin: 0 auto;
-}
 
-.music-btn {
-    background: var(--input-color);
-    color: var(--text-color);
-    border: 2px solid var(--input-color);
-    padding: 0.5rem 1.5rem;
-    border-radius: 1000px;
-    cursor: pointer;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.2s;
-}
+/*  RESPONSIVE DESIGN  */
 
-.music-btn:hover {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-    transform: translateY(-2px);
-}
-
-.play-btn {
-    background: var(--accent-color);
-    color: var(--base-color);
-    border-color: var(--accent-color);
-    font-size: 1rem;
-    padding: 0.75rem 2rem;
-}
-
-.play-btn:hover {
-    background: var(--text-color);
-    border-color: var(--text-color);
-    color: var(--base-color);
-}
-
-.volume-control {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: var(--text-color);
-    font-size: 0.9rem;
-}
-
-.volume-slider {
-    width: 150px;
-    height: 6px;
-    border-radius: 3px;
-    background: var(--input-color);
-    outline: none;
-    -webkit-appearance: none;
-}
-
-.volume-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--accent-color);
-    cursor: pointer;
-}
-
-.volume-slider::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--accent-color);
-    cursor: pointer;
-    border: none;
-}
-
-.music-info {
-    color: var(--text-color);
-    font-size: 0.9rem;
-    opacity: 0.8;
-}
-
-/* 
-   RESPONSIVE DESIGN
-   = */
 @media (max-width: 968px) {
     .main-wrapper {
         flex-direction: column;
@@ -401,38 +288,9 @@ body {
         gap: 0.5rem;
         align-items: flex-start;
     }
-    
-    .theme-switcher {
-        align-self: flex-end;
-    }
+   
 }
 
-@media (max-width: 768px) {
-    .container {
-        padding: 2.5em 1.5em;
-        gap: 20px;
-    }
-    
-    .button-wrapper {
-        gap: 1em;
-        width: 100%;
-    }
-    
-    button {
-        flex: 1;
-        min-width: 100px;
-    }
-
-    .music-controls {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .volume-control {
-        width: 100%;
-        justify-content: center;
-    }
-}
 
 @media (max-width: 480px) {
     .timer {

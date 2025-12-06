@@ -35,6 +35,7 @@ let currentSessionId = null;
  * Formats seconds into MM:SS format
  * Why: Separating formatting logic makes it reusable and testable
  */
+
 function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -418,6 +419,7 @@ function showSessionCompleteModal() {
 /* Plays a notification sound
  * Why: Audio feedback helps users stay aware even when not looking at screen
  */
+
 function playNotification(type = 'start') {
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -480,9 +482,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// ============================================
 // TASK MANAGEMENT
-// ============================================
 
 function addTask(text) {
     if (!text.trim()) return;
@@ -562,6 +562,7 @@ window.deleteTask = deleteTask;
 
 // Initialize the timer display and button states
 // Why: Ensures UI is correct on page load
+
 updateTimerDisplay();
 updateButtonStates();
 loadTasks();
