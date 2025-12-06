@@ -128,7 +128,6 @@ body{
 /* buttons */
 
 .btn-primary,
-.btn-secondary,
 .btn-primary-large,
 .btn-outline-large{
     padding: 0.75rem 1.5rem;
@@ -142,22 +141,6 @@ body{
     font-size: 1rem;
 }
 
-.btn-secondary {
-    background: var(--bg-white);
-    color: var(--text-dark);
-    border: 1px solid var(--border-light);
-    border-radius: 12px;
-    font-weight: 500;
-    text-transform: none;
-}
-
-.btn-secondary:hover {
-    background: var(--bg-off-white);
-    border-color: var(--text-medium);
-    color: var(--text-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
 
 .btn-primary,
 .btn-primary-large{
@@ -293,6 +276,8 @@ body{
     animation: float 3s ease-in-out infinite;
 }
 
+
+
 @keyframes float {
     0%, 100% {
         transform: translateY(0px);
@@ -301,6 +286,7 @@ body{
         transform: translateY(-20px);
     }
 }
+
 
 .timer-preview{
     display: flex;
@@ -396,16 +382,6 @@ body{
     border-color: var(--primary-purple);
 }
 
-.feature-icon {
-    font-size: 3rem;
-    margin-bottom: var(--spacing-sm);
-    display: inline-block;
-    transition: transform var(--transition-medium);
-}
-
-.feature-card:hover .feature-icon {
-    transform: scale(1.15) rotate(5deg);
-}
 
 .feature-title {
     font-size: 1.5rem;
