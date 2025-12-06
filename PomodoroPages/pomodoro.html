@@ -14,13 +14,14 @@
         <!-- Left Side: Timer Section -->
         <div class="timer-section">
             <div class="container">
-                <h1 class="title">Pomodoro Timer</h1>
-                <hr>
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="pomodoro">Pomodoro</button>
+                    <button class="mode-btn" data-mode="short-break">Short Break</button>
+                    <button class="mode-btn" data-mode="long-break">Long Break</button>
+                </div>
                 <p class="timer" id="timer">25:00</p>
                 <div class="button-wrapper">
-                    <button id="start-btn">Start</button>
-                    <button id="stop-btn">Stop</button>
-                    <button id="reset-btn">Reset</button>
+                    <button id="start-btn">START</button>
                 </div>
             </div>
         </div>

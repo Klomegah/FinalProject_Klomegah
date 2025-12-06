@@ -1,11 +1,19 @@
 
 // ENHANCED POMODORO TIMER - STATE MANAGEMENT
 
+// Timer modes configuration
+const timerModes = {
+    pomodoro: 1500,    // 25 minutes
+    'short-break': 300, // 5 minutes
+    'long-break': 900  // 15 minutes
+};
+
 // Why: Using a state object keeps all timer data organized and makes debugging easier
 const timerState = {
     timeLeft: 1500, // 25 minutes in seconds (default Pomodoro length)
     isRunning: false,
     intervalId: null,
+    currentMode: 'pomodoro', // Current timer mode
     defaultTime: 1500 // Store default so we can reset easily
 };
 
@@ -13,11 +21,10 @@ const timerState = {
 // Why: Caching DOM elements improves performance and makes code cleaner
 const elements = {
     startButton: document.getElementById('start-btn'),
-    pauseButton: document.getElementById('stop-btn'),
-    resetButton: document.getElementById('reset-btn'),
     timerDisplay: document.getElementById('timer'),
     taskInput: document.getElementById('task-input'),
-    tasksList: document.getElementById('tasks-list')
+    tasksList: document.getElementById('tasks-list'),
+    modeButtons: document.querySelectorAll('.mode-btn')
 };
 
 // Tasks state
@@ -57,18 +64,37 @@ function updateTimerDisplay() {
 
 function updateButtonStates() {
     if (timerState.isRunning) {
-        elements.startButton.disabled = true;
-        elements.startButton.style.opacity = '0.6';
-        elements.startButton.style.cursor = 'not-allowed';
-        elements.pauseButton.disabled = false;
-        elements.pauseButton.style.opacity = '1';
-    } else {
-        elements.startButton.disabled = false;
-        elements.startButton.style.opacity = '1';
+        elements.startButton.textContent = 'PAUSE';
         elements.startButton.style.cursor = 'pointer';
-        elements.pauseButton.disabled = false;
-        elements.pauseButton.style.opacity = '1';
+    } else {
+        elements.startButton.textContent = 'START';
+        elements.startButton.style.cursor = 'pointer';
     }
+}
+
+/**
+ * Switches timer mode (Pomodoro, Short Break, Long Break)
+ */
+function switchMode(mode) {
+    if (timerState.isRunning) {
+        pauseTimer();
+    }
+    
+    timerState.currentMode = mode;
+    timerState.defaultTime = timerModes[mode];
+    timerState.timeLeft = timerModes[mode];
+    
+    // Update active mode button
+    elements.modeButtons.forEach(btn => {
+        if (btn.dataset.mode === mode) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    
+    updateTimerDisplay();
+    updateButtonStates();
 }
 
 /* TIMER CONTROL FUNCTIONS     */
@@ -124,7 +150,18 @@ function pauseTimer() {
 }
 
 /**
- * Resets the timer to default time
+ * Toggles timer (start/pause)
+ */
+function toggleTimer() {
+    if (timerState.isRunning) {
+        pauseTimer();
+    } else {
+        startTimer();
+    }
+}
+
+/**
+ * Resets the timer to default time for current mode
  * Why: Ensures timer stops before resetting (prevents bugs)
  */
 function resetTimer() {
@@ -145,11 +182,22 @@ function resetTimer() {
 function completeTimer() {
     pauseTimer();
     
-    // Create session data for Feynman notes
+    // Play completion sound
+    playNotification('complete');
+    
+    // Check if it's a break mode
+    if (timerState.currentMode !== 'pomodoro') {
+        // For breaks, just show notification and reset
+        showCompletionNotification('Break time is over! Ready to get back to work?');
+        resetTimer();
+        return;
+    }
+    
+    // For Pomodoro sessions, create session data and show modal
     const sessionData = {
         sessionId: currentSessionId || Date.now().toString(),
         date: new Date().toISOString(),
-        duration: timerState.defaultTime,
+        duration: timerModes.pomodoro,
         tasks: tasks.filter(t => !t.completed).map(t => t.text),
         completedTasks: tasks.filter(t => t.completed).map(t => t.text)
     };
@@ -160,16 +208,8 @@ function completeTimer() {
     localStorage.setItem('pomodoroSessions', JSON.stringify(sessions));
     localStorage.setItem('currentSession', JSON.stringify(sessionData));
     
-    // Play completion sound
-    playNotification('complete');
-    
-    // Show notification and redirect to Feynman notes
-    showCompletionNotification();
-    
-    // Redirect to Feynman notes page after 2 seconds
-    setTimeout(() => {
-        window.location.href = '../feynmannotes/feynman-notes.html';
-    }, 2000);
+    // Show modal asking if they want to continue or proceed to Feynman notes
+    showSessionCompleteModal();
     
     // Reset to default time
     timerState.timeLeft = timerState.defaultTime;
@@ -184,10 +224,10 @@ function completeTimer() {
  * Shows a visual notification when timer completes
  * Why: Better UX than browser alert - doesn't block interaction
  */
-function showCompletionNotification() {
+function showCompletionNotification(message = "⏰ Time's up! Great work!") {
     // Create notification element
     const notification = document.createElement('div');
-    notification.textContent = "⏰ Time's up! Great work!";
+    notification.textContent = message;
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -200,6 +240,7 @@ function showCompletionNotification() {
         z-index: 1000;
         animation: slideIn 0.3s ease-out;
         font-weight: 600;
+        font-family: 'Poppins', sans-serif;
     `;
     
     document.body.appendChild(notification);
@@ -209,6 +250,169 @@ function showCompletionNotification() {
         notification.style.animation = 'slideOut 0.3s ease-out';
         setTimeout(() => notification.remove(), 300);
     }, 3000);
+}
+
+/**
+ * Shows a modal asking if user wants to continue or proceed to Feynman notes
+ */
+function showSessionCompleteModal() {
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease-out;
+    `;
+    
+    // Create modal content
+    const modal = document.createElement('div');
+    modal.className = 'session-complete-modal';
+    modal.style.cssText = `
+        background: white;
+        border-radius: 20px;
+        padding: 2.5em 3em;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        animation: slideUp 0.3s ease-out;
+        font-family: 'Poppins', sans-serif;
+    `;
+    
+    modal.innerHTML = `
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+        <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; color: #1A1A1A;">Session Complete!</h2>
+        <p style="color: #4A4A4A; margin-bottom: 2rem; font-size: 1.1rem;">Great work! What would you like to do next?</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <button id="continue-session-btn" style="
+                padding: 1em 2em;
+                border: none;
+                border-radius: 12px;
+                background: #8672FF;
+                color: white;
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-family: 'Poppins', sans-serif;
+            ">Continue Session</button>
+            <button id="feynman-notes-btn" style="
+                padding: 1em 2em;
+                border: 2px solid #8672FF;
+                border-radius: 12px;
+                background: white;
+                color: #8672FF;
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-family: 'Poppins', sans-serif;
+            ">Go to Feynman Notes</button>
+        </div>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Button event listeners
+    const continueBtn = modal.querySelector('#continue-session-btn');
+    const feynmanBtn = modal.querySelector('#feynman-notes-btn');
+    
+    continueBtn.addEventListener('mouseenter', () => {
+        continueBtn.style.transform = 'translateY(-2px)';
+        continueBtn.style.boxShadow = '0 4px 12px rgba(134, 114, 255, 0.4)';
+    });
+    continueBtn.addEventListener('mouseleave', () => {
+        continueBtn.style.transform = 'translateY(0)';
+        continueBtn.style.boxShadow = 'none';
+    });
+    
+    feynmanBtn.addEventListener('mouseenter', () => {
+        feynmanBtn.style.transform = 'translateY(-2px)';
+        feynmanBtn.style.boxShadow = '0 4px 12px rgba(134, 114, 255, 0.2)';
+    });
+    feynmanBtn.addEventListener('mouseleave', () => {
+        feynmanBtn.style.transform = 'translateY(0)';
+        feynmanBtn.style.boxShadow = 'none';
+    });
+    
+    continueBtn.addEventListener('click', () => {
+        overlay.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => overlay.remove(), 300);
+        // Optionally switch to short break
+        switchMode('short-break');
+    });
+    
+    feynmanBtn.addEventListener('click', () => {
+        window.location.href = '../FeynmanPages/feynmannotes.html';
+    });
+    
+    // Close on overlay click
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => overlay.remove(), 300);
+            // Default to continuing session if clicked outside
+            switchMode('short-break');
+        }
+    });
+    
+    // Add CSS animations if not already present
+    if (!document.getElementById('modal-animations')) {
+        const style = document.createElement('style');
+        style.id = 'modal-animations';
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            @keyframes slideOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
 }
 
 /* Plays a notification sound
@@ -247,11 +451,15 @@ function playNotification(type = 'start') {
 
 // EVENT LISTENERS
 
-
 // Why: Using addEventListener instead of inline handlers is best practice
-elements.startButton.addEventListener('click', startTimer);
-elements.pauseButton.addEventListener('click', pauseTimer);
-elements.resetButton.addEventListener('click', resetTimer);
+elements.startButton.addEventListener('click', toggleTimer);
+
+// Mode selector buttons
+elements.modeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        switchMode(btn.dataset.mode);
+    });
+});
 
 // Keyboard shortcuts for better accessibility
 // Why: Keyboard support makes the app more accessible and faster to use
@@ -263,11 +471,7 @@ document.addEventListener('keydown', (e) => {
         case ' ':
         case 's':
             e.preventDefault();
-            if (timerState.isRunning) {
-                pauseTimer();
-            } else {
-                startTimer();
-            }
+            toggleTimer();
             break;
         case 'r':
             e.preventDefault();
@@ -369,8 +573,11 @@ resetTimer = function() {
     originalResetTimer();
 };
 
-
-
-document.head.appendChild(style);
+// Initialize mode selector
+elements.modeButtons.forEach(btn => {
+    if (btn.dataset.mode === timerState.currentMode) {
+        btn.classList.add('active');
+    }
+});
 
 
