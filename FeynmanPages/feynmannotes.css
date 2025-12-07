@@ -30,7 +30,8 @@ body {
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    padding-top: 70px;
+    padding-top: 100px;
+    padding-bottom: 4rem;
 }
 
 /* App Navbar - Matching Landing Page Style */
@@ -271,7 +272,8 @@ button {
     }
 
     body {
-        padding-top: 80px;
+        padding-top: 100px;
+        padding-bottom: 3rem;
     }
 
     .container {

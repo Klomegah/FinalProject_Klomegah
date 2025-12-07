@@ -216,8 +216,8 @@ body {
     border-radius: 12px;
     border: none;
     cursor: pointer;
-    color: var(--accent-color);
-    background-color: var(--base-color);
+    color: var(--base-color);
+    background-color: var(--accent-color);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
@@ -227,6 +227,7 @@ body {
 }
 
 #start-btn:hover {
+    background-color: var(--primary-purple-dark);
     transform: translateY(-2px);
 }
 
