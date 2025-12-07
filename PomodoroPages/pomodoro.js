@@ -140,7 +140,6 @@ function startTimer() {
  * Why: Clear separation of pause vs reset logic
  */
 
-
 function pauseTimer() {
     if (!timerState.isRunning) return;
     
@@ -191,7 +190,7 @@ function completeTimer() {
     // Check if it's a break mode
     if (timerState.currentMode !== 'pomodoro') {
         // For breaks, just show notification and reset
-        showCompletionNotification('Break time is over! Get back to work!');
+        showCompletionNotification('Break time is over. Get back to work!');
         resetTimer();
         return;
     }
@@ -225,7 +224,7 @@ function completeTimer() {
  * Why: Better UX than browser alert - doesn't block interaction
  */
 
-function showCompletionNotification(message = " Time's up! Great work!") {
+function showCompletionNotification(message = "Time's up! Great work!") {
     // Create notification element
     const notification = document.createElement('div');
     notification.textContent = message;
@@ -257,6 +256,7 @@ function showCompletionNotification(message = " Time's up! Great work!") {
  * Shows a modal asking if user wants to continue or proceed to Feynman notes
  */
 function showSessionCompleteModal() {
+    
     // Create modal overlay
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
@@ -291,9 +291,8 @@ function showSessionCompleteModal() {
     `;
     
     modal.innerHTML = `
-        <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
         <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; color: #1A1A1A;">Session Complete!</h2>
-        <p style="color: #4A4A4A; margin-bottom: 2rem; font-size: 1.1rem;">Great work! What would you like to do next?</p>
+        <p style="color: #4A4A4A; margin-bottom: 2rem; font-size: 1.1rem;">What would you like to do next?</p>
         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
             <button id="continue-session-btn" style="
                 padding: 1em 2em;
@@ -350,7 +349,8 @@ function showSessionCompleteModal() {
     continueBtn.addEventListener('click', () => {
         overlay.style.animation = 'fadeOut 0.3s ease-out';
         setTimeout(() => overlay.remove(), 300);
-        // Optionally switch to short break
+
+        // Switch to short break
         switchMode('short-break');
     });
     
@@ -364,6 +364,7 @@ function showSessionCompleteModal() {
         if (e.target === overlay) {
             overlay.style.animation = 'fadeOut 0.3s ease-out';
             setTimeout(() => overlay.remove(), 300);
+
             // Default to continuing session if clicked outside
             switchMode('short-break');
         }
@@ -452,7 +453,6 @@ function playNotification(type = 'start') {
     }
 }
 
-// EVENT LISTENERS moved to DOMContentLoaded
 
 // TASKS MANAGEMENT
 
@@ -521,7 +521,6 @@ function loadTasks() {
 // Task input event listener moved to DOMContentLoaded
 
 // EVENT LISTENERS
-
 // Why: Using addEventListener instead of inline handlers is best practice
 elements.startButton.addEventListener('click', toggleTimer);
 
@@ -580,6 +579,7 @@ loadTasks();
 
 // Reset session ID when timer resets
 const originalResetTimer = resetTimer;
+
 resetTimer = function() {
     currentSessionId = null;
     originalResetTimer();
