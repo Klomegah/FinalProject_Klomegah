@@ -6,6 +6,14 @@
     --text-color: black;
     --input-color: #F3F0FF;
     --bg-off-white: #FAF9F6;
+    --primary-purple: #8672FF;
+    --primary-purple-dark: #6B4EFF;
+    --text-dark: #1A1A1A;
+    --text-medium: #4A4A4A;
+    --border-light: #E5E5E5;
+    --spacing-sm: 1rem;
+    --spacing-md: 2rem;
+    --transition-medium: 0.3s ease;
 }
 
 * {
@@ -22,6 +30,80 @@ body {
     align-items: center;
     justify-content: center;
     padding: 2rem;
+    padding-top: 90px;
+}
+
+/* App Navbar - Matching Landing Page Style */
+.app-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(250, 249, 246, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-light);
+    z-index: 1000;
+    padding: var(--spacing-sm) 0;
+    transition: all var(--transition-medium);
+}
+
+.app-nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-dark);
+}
+
+.app-logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-family: 'Poppins', sans-serif;
+}
+
+.app-logo:hover {
+    opacity: 0.8;
+}
+
+.app-nav-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.app-nav-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all var(--transition-medium);
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.app-nav-btn-primary {
+    background-color: var(--primary-purple);
+    color: var(--base-color);
+    text-transform: uppercase;
+}
+
+.app-nav-btn-primary:hover {
+    background-color: var(--primary-purple-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(134, 114, 255, 0.4);
 }
 
 .container {
@@ -179,6 +261,23 @@ button {
 }
 
 @media (max-width: 768px) {
+    .app-nav-container {
+        padding: 0 var(--spacing-sm);
+    }
+
+    .app-logo-text {
+        font-size: 1.25rem;
+    }
+
+    .app-nav-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    body {
+        padding-top: 80px;
+    }
+
     .container {
         padding: 2em 1.5em;
     }
