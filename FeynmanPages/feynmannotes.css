@@ -34,7 +34,7 @@ body {
 }
 
 /* App Navbar - Matching Landing Page Style */
-.app-navbar {
+.navbar {
     position: fixed;
     top: 0;
     left: 0;
@@ -48,7 +48,7 @@ body {
     transition: all var(--transition-medium);
 }
 
-.app-nav-container {
+.nav-container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 var(--spacing-md);
@@ -64,24 +64,24 @@ body {
     color: var(--text-dark);
 }
 
-.app-logo-text {
+.logo-text {
     font-size: 1.5rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     font-family: 'Poppins', sans-serif;
 }
 
-.app-logo:hover {
+.logo-text:hover {
     opacity: 0.8;
 }
 
-.app-nav-actions {
+.nav-actions {
     display: flex;
     gap: var(--spacing-sm);
     align-items: center;
 }
 
-.app-nav-btn {
+.logout-btn {
     padding: 0.75rem 1.5rem;
     border-radius: 12px;
     font-weight: 600;
@@ -94,13 +94,13 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
-.app-nav-btn-primary {
+.logout-btn {
     background-color: var(--primary-purple);
     color: var(--base-color);
     text-transform: uppercase;
 }
 
-.app-nav-btn-primary:hover {
+.logout-btn:hover {
     background-color: var(--primary-purple-dark);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(134, 114, 255, 0.4);

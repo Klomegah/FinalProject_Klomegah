@@ -7,6 +7,14 @@
     --text-color: black;
     --input-color: #F3F0FF;
     --bg-off-white: #FAF9F6;
+    --primary-purple: #8672FF;
+    --primary-purple-dark: #6B4EFF;
+    --text-dark: #1A1A1A;
+    --text-medium: #4A4A4A;
+    --border-light: #E5E5E5;
+    --spacing-sm: 1rem;
+    --spacing-md: 2rem;
+    --transition-medium: 0.3s ease;
 }
 
 * {
@@ -16,13 +24,86 @@
 }
 
 body {
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto;
+    height: 100vh;
+    overflow: hidden;
     background-color: var(--bg-off-white);
     font-family: 'Poppins', sans-serif;
     display: flex;
     flex-direction: column;
+    padding-top: 70px;
+}
+
+/* App Navbar - Matching Landing Page Style */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(250, 249, 246, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-light);
+    z-index: 1000;
+    padding: var(--spacing-sm) 0;
+    transition: all var(--transition-medium);
+}
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-dark);
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-family: 'Poppins', sans-serif;
+}
+
+.logo:hover {
+    opacity: 0.8;
+}
+
+.nav-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.logout-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all var(--transition-medium);
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.logout-btn {
+    background-color: var(--primary-purple);
+    color: var(--base-color);
+    text-transform: uppercase;
+}
+
+.logout-btn:hover {
+    background-color: var(--primary-purple-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(134, 114, 255, 0.4);
 }
 
 
@@ -39,6 +120,8 @@ body {
     width: 100%;
     overflow: hidden;
     align-items: stretch;
+    height: calc(100vh - 70px);
+    max-height: calc(100vh - 70px);
 }
 
 /*  TIMER SECTION (LEFT)     */
@@ -159,9 +242,10 @@ body {
     gap: 1rem;
     color: var(--text-color);
     box-shadow: 0 4px 20px rgba(134, 114, 255, 0.1);
-    min-height: 100%;
+    height: 100%;
     max-height: 100%;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .tasks-title {
@@ -251,6 +335,8 @@ body {
 .add-task-box {
     margin-top: auto;
     flex-shrink: 0;
+    width: 100%;
+    display: block;
 }
 
 #task-input {
@@ -263,6 +349,7 @@ body {
     font-family: 'Poppins', sans-serif;
     font-size: 0.95rem;
     transition: border-color 0.2s, background 0.2s;
+    box-sizing: border-box;
 }
 
 #task-input::placeholder {
@@ -285,14 +372,23 @@ body {
 
 @media (max-width: 968px) {
     body {
+        min-height: 100vh;
+        height: auto;
         overflow-y: auto;
+        overflow-x: hidden;
+        padding-top: 70px;
+    }
+
+    .app-nav-container {
+        padding: 0 var(--spacing-sm);
     }
 
     .main-wrapper {
         flex-direction: column;
         padding: 1rem;
-        gap: 1rem;
-        min-height: auto;
+        gap: 1.5rem;
+        height: auto;
+        min-height: calc(100vh - 70px);
         overflow: visible;
     }
 
@@ -301,14 +397,29 @@ body {
         min-height: auto;
     }
 
+    .container {
+        max-width: 100%;
+        padding: 2em 2em;
+        gap: 20px;
+        min-height: 400px;
+        width: 100%;
+    }
+    
+    .timer {
+        font-size: clamp(3em, 12vw, 5em);
+    }
+
     .tasks-section {
         width: 100%;
         max-width: 600px;
         margin: 0 auto;
         flex-shrink: 1;
         min-height: 400px;
-        max-height: 70vh;
-        overflow: hidden;
+        max-height: none;
+        height: auto;
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
     }
 
     .tasks-header {
@@ -317,24 +428,15 @@ body {
 
     .tasks-list {
         flex: 1;
-        min-height: 0;
+        min-height: 200px;
+        max-height: 400px;
         overflow-y: auto;
     }
 
     .add-task-box {
         flex-shrink: 0;
-        margin-top: auto;
-    }
-
-    .container {
-        max-width: 100%;
-        padding: 1.5em 2em;
-        gap: 15px;
-        min-height: auto;
-    }
-    
-    .timer {
-        font-size: clamp(2.5em, 10vw, 4em);
+        margin-top: 1rem;
+        width: 100%;
     }
     
     .tasks-header {
@@ -357,42 +459,74 @@ body {
 
 
 @media (max-width: 480px) {
+    body {
+        min-height: 100vh;
+        height: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-top: 70px;
+    }
+
+    .app-nav-container {
+        padding: 0 1rem;
+    }
+
+    .app-logo-text {
+        font-size: 1.25rem;
+    }
+
+    .app-nav-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
     .main-wrapper {
-        padding: 0.5rem;
-        gap: 0.75rem;
+        padding: 0.75rem;
+        gap: 1rem;
+        height: auto;
+        min-height: calc(100vh - 70px);
+    }
+
+    .container {
+        padding: 1.5em 1.5em;
+        min-height: 350px;
+        gap: 15px;
     }
 
     .timer {
-        font-size: 3em;
+        font-size: clamp(2.5em, 15vw, 4em);
     }
     
     .title {
         font-size: 1.8em;
     }
 
-    .container {
-        padding: 1.5em 1.5em;
-    }
-
     .tasks-section {
         padding: 1em;
         min-height: 350px;
-        max-height: 60vh;
-    }
-
-    .tasks-header {
-        flex-shrink: 0;
+        max-height: none;
+        height: auto;
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
     }
 
     .tasks-list {
         flex: 1;
-        min-height: 0;
+        min-height: 150px;
+        max-height: 300px;
         overflow-y: auto;
     }
 
     .add-task-box {
         flex-shrink: 0;
-        margin-top: 0.5rem;
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    #task-input {
+        padding: 0.75rem;
+        font-size: 0.9rem;
     }
 
     .mode-selector {
