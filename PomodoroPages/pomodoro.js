@@ -139,6 +139,8 @@ function startTimer() {
  * Pauses the timer
  * Why: Clear separation of pause vs reset logic
  */
+
+
 function pauseTimer() {
     if (!timerState.isRunning) return;
     
@@ -189,7 +191,7 @@ function completeTimer() {
     // Check if it's a break mode
     if (timerState.currentMode !== 'pomodoro') {
         // For breaks, just show notification and reset
-        showCompletionNotification('Break time is over! Ready to get back to work?');
+        showCompletionNotification('Break time is over! Get back to work!');
         resetTimer();
         return;
     }
@@ -217,15 +219,13 @@ function completeTimer() {
     updateTimerDisplay();
 }
     
-/* UX ENHANCEMENTS
-
-
 
 /**
  * Shows a visual notification when timer completes
  * Why: Better UX than browser alert - doesn't block interaction
  */
-function showCompletionNotification(message = "⏰ Time's up! Great work!") {
+
+function showCompletionNotification(message = " Time's up! Great work!") {
     // Create notification element
     const notification = document.createElement('div');
     notification.textContent = message;
@@ -358,6 +358,7 @@ function showSessionCompleteModal() {
         window.location.href = '../FeynmanPages/feynmannotes.html';
     });
     
+
     // Close on overlay click
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
@@ -368,7 +369,7 @@ function showSessionCompleteModal() {
         }
     });
     
-    // Add CSS animations if not already present
+    // Add CSS animations 
     if (!document.getElementById('modal-animations')) {
         const style = document.createElement('style');
         style.id = 'modal-animations';
@@ -451,38 +452,9 @@ function playNotification(type = 'start') {
     }
 }
 
-// EVENT LISTENERS
+// EVENT LISTENERS moved to DOMContentLoaded
 
-// Why: Using addEventListener instead of inline handlers is best practice
-elements.startButton.addEventListener('click', toggleTimer);
-
-// Mode selector buttons
-elements.modeButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        switchMode(btn.dataset.mode);
-    });
-});
-
-// Keyboard shortcuts for better accessibility
-// Why: Keyboard support makes the app more accessible and faster to use
-document.addEventListener('keydown', (e) => {
-    // Prevent shortcuts when typing in inputs (if we add any later)
-    if (e.target.tagName === 'INPUT') return;
-    
-    switch(e.key.toLowerCase()) {
-        case ' ':
-        case 's':
-            e.preventDefault();
-            toggleTimer();
-            break;
-        case 'r':
-            e.preventDefault();
-            resetTimer();
-            break;
-    }
-});
-
-// TASK MANAGEMENT
+// TASKS MANAGEMENT
 
 function addTask(text) {
     if (!text.trim()) return;
@@ -546,12 +518,53 @@ function loadTasks() {
     }
 }
 
-// Task input event listener
-elements.taskInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        addTask(elements.taskInput.value);
+// Task input event listener moved to DOMContentLoaded
+
+// EVENT LISTENERS
+
+// Why: Using addEventListener instead of inline handlers is best practice
+elements.startButton.addEventListener('click', toggleTimer);
+
+// Mode selector buttons
+elements.modeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        switchMode(btn.dataset.mode);
+    });
+});
+
+// Keyboard shortcuts for better accessibility
+// Why: Keyboard support makes the app more accessible and faster to use
+document.addEventListener('keydown', (e) => {
+    // Prevent shortcuts when typing in inputs (if we add any later)
+    if (e.target.tagName === 'INPUT') return;
+    
+    switch(e.key.toLowerCase()) {
+        case ' ':
+        case 's':
+            e.preventDefault();
+            toggleTimer();
+            break;
+        case 'r':
+            e.preventDefault();
+            resetTimer();
+            break;
     }
 });
+
+// Task input event listener
+if (elements.taskInput) {
+    elements.taskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const taskText = elements.taskInput.value.trim();
+            if (taskText) {
+                addTask(taskText);
+            }
+        }
+    });
+} else {
+    console.error('Task input element not found!');
+}
 
 // Make functions globally available for inline handlers
 window.toggleTask = toggleTask;
@@ -559,10 +572,8 @@ window.deleteTask = deleteTask;
 
 // INITIALIZATION
 
-
 // Initialize the timer display and button states
 // Why: Ensures UI is correct on page load
-
 updateTimerDisplay();
 updateButtonStates();
 loadTasks();
