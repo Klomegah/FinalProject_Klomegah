@@ -66,7 +66,7 @@ function saveNotes() {
     // Optionally redirect back to timer
     setTimeout(() => {
         if (confirm('Notes saved! Return to timer?')) {
-            window.location.href = '../pomodoro/pomodoro.html';
+            window.location.href = '../PomodoroPages/pomodoro.html';
         }
     }, 2000);
 }
