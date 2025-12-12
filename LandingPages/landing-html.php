@@ -24,9 +24,7 @@
         </div> 
         
         <div class ="nav-actions">
-            <a href = "../PomodoroPages/pomodoro.html" class="btn-primary">Go to App</a>
-            <a href = "../LoginAndSignUpPages/login.html" class="btn-primary">Log In</a>
-            <a href = "../LoginAndSignUpPages/signup.html" class="btn-primary">GET STARTED</a>
+            <a href = "../LoginAndSignUpPages/signup-html.php" class="btn-primary">GET STARTED</a>
         </div>
      </nav>
 
