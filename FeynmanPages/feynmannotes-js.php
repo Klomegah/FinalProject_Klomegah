@@ -63,10 +63,10 @@ function saveNotes() {
         btn.textContent = originalText;
     }, 2000);
     
-    // Optionally redirect back to timer
+    // redirect back to timer
     setTimeout(() => {
         if (confirm('Notes saved! Return to timer?')) {
-            window.location.href = '../PomodoroPages/pomodoro.html';
+            window.location.href = '../PomodoroPages/pomodoro-html.php';
         }
     }, 2000);
 }
