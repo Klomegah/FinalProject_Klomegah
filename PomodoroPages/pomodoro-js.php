@@ -1,4 +1,4 @@
-
+<?php header('Content-Type: application/javascript'); ?>
 // ENHANCED POMODORO TIMER - STATE MANAGEMENT
 
 // Timer modes configuration

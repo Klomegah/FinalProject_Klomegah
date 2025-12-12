@@ -1,4 +1,4 @@
-
+<?php header('Content-Type: application/javascript'); ?>
 // FEYNMAN NOTES - SESSION TRACKING
 
 // Load current session data

@@ -1,3 +1,4 @@
+<?php header('Content-Type: application/javascript'); ?>
 const form = document.getElementById("form");
 const firstname_input = document.getElementById("firstname-input");
 const lastname_input = document.getElementById("lastname-input");
