@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Feynman Reflection Notes - Explain what you learned">
     <title>Feynman Notes - LockIn</title>
-    <link rel="stylesheet" href="feynmannotes.css">
+    <link rel="stylesheet" href="feynmannotes-css.php">
 
     
 </head>
@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <script src="feynmannotes.js"></script>
+    <script src="feynmannotes-js.php"></script>
 </body>
 </html>
 
