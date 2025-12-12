@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login Page</title>
-    <link rel="stylesheet" href="loginandsignup.css">
+    <link rel="stylesheet" href="loginandsignup-css.php">
    
 </head>
 <body>
@@ -31,7 +31,7 @@
             
             <button type="submit" id="login-button">Log In</button>
 
-            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+            <p>Don't have an account? <a href="signup-html.php">Sign Up</a></p>
         
         </form>
     </div>
@@ -39,7 +39,7 @@
 
 
 
- <script  src="loginandsignup.js" defer></script>
+ <script  src="loginandsignup-js.php" defer></script>
 
 
 </body>

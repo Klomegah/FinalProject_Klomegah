@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>LockIn - Focus.Learn.Reflect</title>
-    <link rel="stylesheet" href="landing.css">
+    <link rel="stylesheet" href="landing-css.php">
 </head>
 
 <body>
@@ -239,6 +239,6 @@
         </div>
      </footer>
 
-     <script src="landing.js"></script>
+     <script src="landing-js.php"></script>
 </body>
 </html>

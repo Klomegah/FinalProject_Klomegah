@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="A beautiful Pomodoro timer to help you focus and be productive">
     <title>Pomodoro Timer</title>
-    <link rel="stylesheet" href="pomodorostyle.css">
+    <link rel="stylesheet" href="pomodorostyle-css.php">
     
 </head>
 
@@ -61,6 +61,6 @@
     </div>
 
 
-    <script src="pomodoro.js"></script>
+    <script src="pomodoro-js.php"></script>
 </body>
 </html>
