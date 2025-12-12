@@ -57,7 +57,7 @@
     </div>
     
 
-<script src="loginandsignup-js.php" defer></script>
+<script src="loginandsignup.js" defer></script>
    
 </body>
 </html>

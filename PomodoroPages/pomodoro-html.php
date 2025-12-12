@@ -61,6 +61,6 @@
     </div>
 
 
-    <script src="pomodoro-js.php"></script>
+    <script src="pomodoro.js"></script>
 </body>
 </html>

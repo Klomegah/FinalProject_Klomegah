@@ -66,12 +66,12 @@
         </div>
 
         <div class="actions">
-            <button class="btn-secondary" onclick="window.location.href='../PomodoroPages/pomodoro-html.php'">Back to Timer</button>
-            <button class="btn-primary" id="save-btn">Save Notes</button>
+            <button type="button" class="btn-secondary" onclick="window.location.href='../PomodoroPages/pomodoro-html.php'">Back to Timer</button>
+            <button type="button" class="btn-primary" id="save-btn">Save Notes</button>
         </div>
     </div>
 
-    <script src="feynmannotes-js.php"></script>
+    <script src="feynmannotes.js"></script>
 </body>
 </html>
 

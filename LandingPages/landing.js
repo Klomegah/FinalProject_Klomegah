@@ -1,5 +1,3 @@
-<?php header('Content-Type: application/javascript'); ?>
-
 // LANDING PAGE INTERACTIVITY
 
 // Why: Adds smooth interactions and enhances user experience
@@ -84,4 +82,3 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
 });
-

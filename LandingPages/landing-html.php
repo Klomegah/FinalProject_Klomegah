@@ -237,6 +237,6 @@
         </div>
      </footer>
 
-     <script src="landing-js.php"></script>
+     <script src="landing.js"></script>
 </body>
 </html>

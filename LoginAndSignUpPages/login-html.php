@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="loginandsignup-css.php">
    
 </head>
+
 <body>
    
     <div class = "wrapper">
@@ -39,7 +40,7 @@
 
 
 
- <script  src="loginandsignup-js.php" defer></script>
+ <script  src="loginandsignup.js" defer></script>
 
 
 </body>
