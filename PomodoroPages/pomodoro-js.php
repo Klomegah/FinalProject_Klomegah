@@ -355,7 +355,7 @@ function showSessionCompleteModal() {
     });
     
     feynmanBtn.addEventListener('click', () => {
-        window.location.href = '../FeynmanPages/feynmannotes.html';
+        window.location.href = '../FeynmanPages/feynmannotes-html.php';
     });
     
 

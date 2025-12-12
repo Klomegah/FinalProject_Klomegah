@@ -66,7 +66,7 @@
         </div>
 
         <div class="actions">
-            <button class="btn-secondary" onclick="window.location.href='../PomodoroPages/pomodoro.html'">Back to Timer</button>
+            <button class="btn-secondary" onclick="window.location.href='../PomodoroPages/pomodoro-html.php'">Back to Timer</button>
             <button class="btn-primary" id="save-btn">Save Notes</button>
         </div>
     </div>
