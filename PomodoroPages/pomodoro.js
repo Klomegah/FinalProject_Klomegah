@@ -2,9 +2,9 @@
 
 // Timer modes configuration - TESTING ONLY
 const timerModes = {
-    pomodoro: 10,    // Changed from 1500 to 10 seconds for testing
-    'short-break': 5, 
-    'long-break': 10
+    pomodoro: 1500,    // Changed from 1500 to 10 seconds for testing
+    'short-break': 300, 
+    'long-break': 900
 };
 
 // Why: Using a state object keeps all timer data organized and makes debugging easier
@@ -25,7 +25,7 @@ const timerState = {
 
 const elements = {
     startButton: document.getElementById('start-btn'),
-    timerDisplay: document.querySelector('.timer-text'), // CHANGED - use querySelector for class
+    timerDisplay: document.querySelector('.timer-text'), 
     taskInput: document.getElementById('task-input'),
     tasksList: document.getElementById('tasks-list'),
     modeButtons: document.querySelectorAll('.mode-btn')
@@ -669,7 +669,6 @@ async function addTask(text) {
             renderTasks();
             elements.taskInput.value = '';
         } else {
-            console.error('Failed to create task:', data.error || 'Unknown error');
             alert('Failed to add task. Please try again.');
         }
     } catch (error) {

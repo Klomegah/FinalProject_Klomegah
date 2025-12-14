@@ -168,14 +168,14 @@ body {
 
 /*  TIMER SECTION (LEFT) - No Rectangle Container     */
 .timer-section {
-    flex: 0 0 auto; /* Don't stretch, just fit content */
+    flex: 0 0 auto; 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 2rem;
     padding: 2rem;
-    /* No background, no border - just floating elements */
+    
 }
 
 
@@ -213,8 +213,8 @@ body {
 /* Circular Timer Wrapper */
 .timer-wrapper {
     position: relative;
-    width: 500px; /* Slightly larger for better visibility */
-    height: 500px;
+    width: 350px; /* Slightly larger for better visibility */
+    height: 350px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -225,14 +225,13 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    /* No background, no border - just the rings and text */
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* Progress Ring (Outer Ring Only - No Inner Ring) */
+/* Progress Ring (Outer Ring ) */
 .timer-progress-ring {
     position: absolute;
     inset: 0;
@@ -246,27 +245,28 @@ body {
         var(--border-light) 0deg,
         var(--border-light) 360deg
     );
-    /* Create outer ring only using mask - thicker ring, no inner ring */
+
+    /* Create outer ring */
     mask: radial-gradient(
         circle,
-        transparent calc(50% - 12px),
-        black calc(50% - 12px),
+        transparent calc(50% - 5px),
+        black calc(50% - 5px),
         black 50%,
         transparent 50%
     );
     -webkit-mask: radial-gradient(
         circle,
-        transparent calc(50% - 12px),
-        black calc(50% - 12px),
+        transparent calc(50% - 5px),
+        black calc(50% - 5px),
         black 50%,
         transparent 50%
     );
-    transform: rotate(-90deg); /* Start from top (12 o'clock) */
+    transform: rotate(-90deg); 
     transition: background 0.1s linear;
     pointer-events: none;
 }
 
-/* Timer Text (Centered Inside Circle) */
+/* Timer Text  */
 .timer-text {
     position: relative;
     z-index: 10;
@@ -279,10 +279,6 @@ body {
     line-height: 1;
 }
 
-/* Legacy timer class - hidden for backward compatibility */
-.timer {
-    display: none;
-}
 
 .button-wrapper {
     display: flex;

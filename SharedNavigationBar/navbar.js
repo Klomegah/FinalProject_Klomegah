@@ -25,12 +25,10 @@ async function initializeNavbar() {
         if (data.success && data.user) {
             createUserDropdown(navActions, data.user);
         } else {
-            // Fallback if profile fails to load
-            console.error('Failed to load user profile:', data);
+
             createFallbackNav(navActions);
         }
     } catch (error) {
-        console.error('Error loading user profile:', error);
         createFallbackNav(navActions);
     }
 }
@@ -47,6 +45,10 @@ function createUserDropdown(container, user) {
     navWrapper.style.display = 'flex';
     navWrapper.style.alignItems = 'center';
     navWrapper.style.gap = '0.5rem';
+    
+    // Clear container and append wrapper
+    container.innerHTML = '';
+    container.appendChild(navWrapper);
 
     // User dropdown HTML
     navWrapper.innerHTML = `
@@ -82,7 +84,16 @@ function createUserDropdown(container, user) {
                     </svg>
                     <span>Analytics/Reports</span>
                 </a>
-                <div class="dropdown-divider"></div>
+
+                <a href="../History/history-html.php" class="dropdown-item" id="history-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>History</span>
+                </a>
+
+
                 <a href="../Authentication/logout.php" class="dropdown-item logout-item" id="logout-link">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -125,7 +136,7 @@ function createUserDropdown(container, user) {
 
             // Make AJAX logout request
             try {
-                const response = await fetch(logoutLink.href, {
+                await fetch(logoutLink.href, {
                     method: 'GET',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
@@ -133,7 +144,6 @@ function createUserDropdown(container, user) {
                     credentials: 'same-origin'
                 });
 
-                const data = await response.json();
                 // Redirect to login page
                 window.location.href = '../LoginAndSignUpPages/login-html.php';
             } catch (error) {
@@ -163,7 +173,7 @@ function createFallbackNav(container) {
 
             // Make AJAX logout request
             try {
-                const response = await fetch(logoutLink.href, {
+                await fetch(logoutLink.href, {
                     method: 'GET',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
@@ -171,7 +181,6 @@ function createFallbackNav(container) {
                     credentials: 'same-origin'
                 });
 
-                const data = await response.json();
                 // Redirect to login page
                 window.location.href = '../LoginAndSignUpPages/login-html.php';
             } catch (error) {
