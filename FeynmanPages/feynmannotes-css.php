@@ -36,7 +36,7 @@ body {
     padding-bottom: 4rem;
 }
 
-/* App Navbar - Matching Landing Page Style */
+/* App Navbar - Matches Landing Page Style */
 .navbar {
     position: fixed;
     top: 0;
@@ -84,29 +84,7 @@ body {
     align-items: center;
 }
 
-.logout-btn {
-    padding: 0.75rem 1.5rem;
-    border-radius: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-block;
-    transition: all var(--transition-medium);
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    font-family: 'Poppins', sans-serif;
-}
 
-.logout-btn {
-    background-color: var(--primary-purple);
-    color: var(--base-color);
-    text-transform: uppercase;
-}
-
-.logout-btn:hover {
-    background-color: var(--primary-purple-dark);
-    transform: translateY(-2px);
-}
 
 .container {
     background: var(--base-color);
@@ -290,4 +268,3 @@ button {
         width: 100%;
     }
 }
-

@@ -5,20 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Feynman Reflection Notes - Explain what you learned">
     <title>Feynman Notes - LockIn</title>
+    
     <link rel="stylesheet" href="feynmannotes-css.php">
-
+    <link rel="stylesheet" href="../SharedNavigationBar/navbar-css.php">
+    
     
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="../LandingPages/landing.html" class="logo">
+            <a href="../LandingPages/landing-html.php" class="logo">
                 <span class="logo-text">LockIn</span>
             </a>
             
-            <div class="nav-actions">
-                <a href="../Logout.php" class="logout-btn">Log Out</a>
+            <div class="nav-actions" id="nav-actions">
+                <!-- User dropdown will be injected here by navbar.js -->
             </div>
         </div>
     </nav>
@@ -71,6 +73,7 @@
         </div>
     </div>
 
+    <script src="../SharedNavigationBar/navbar.js"></script>
     <script src="feynmannotes.js"></script>
 </body>
 </html>
