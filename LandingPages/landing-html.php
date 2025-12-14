@@ -198,8 +198,8 @@
             </p>
 
             <div class="cta-actions">
-                <a href="../LoginAndSignUpPages/signup.html" class="btn-primary-large">GET STARTED</a>
-                <a href="../LoginAndSignUpPages/login.html" class="btn-outline-large">Already have an account? Log In</a>
+                <a href="../LoginAndSignUpPages/signup-html.php" class="btn-primary-large">GET STARTED</a>
+                <a href="../LoginAndSignUpPages/login-html.php" class="btn-outline-large">Already have an account? Log In</a>
             </div>
         </div>
     </section>    
