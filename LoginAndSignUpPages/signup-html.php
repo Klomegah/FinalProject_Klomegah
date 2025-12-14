@@ -8,10 +8,21 @@
     
 </head>
 <body>
-   
+    <!-- Activation Popup Modal -->
+    <div id="activation-modal">
+        <div>
+            <h2>Activate Your Account</h2>
+            <p>Your account has been created successfully!</p>
+            <p>Click the button below to activate your account and continue to login.</p>
+            <button id="activate-account-btn">Activate Account</button>
+            <p id="activation-status"></p>
+        </div>
+    </div>
+
     <div class = "wrapper">
         <h1>Signup</h1>
         <p id ="error-message"></p>
+
         <form id = "form" novalidate>  
             <div>
                 <label for ="firstname-input">

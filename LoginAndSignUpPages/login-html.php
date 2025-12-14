@@ -12,7 +12,7 @@
    
     <div class = "wrapper">
         <h1>Login</h1>
-       
+        <p id="success-message" style="display: none; color: green; margin-bottom: 1rem; padding: 0.5rem; background: #d4edda; border-radius: 5px;"></p>
         <form id = "form" novalidate>  
              <p id ="error-message"></p>
            

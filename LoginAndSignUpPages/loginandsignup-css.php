@@ -178,5 +178,70 @@ form div.incorrect input {
     line-height: 1.6;
     box-sizing: border-box;
 }
+
+/* Activation Modal Styles */
+#activation-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+#activation-modal > div {
+    background: var(--base-color);
+    padding: 40px;
+    border-radius: 15px;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+#activation-modal h2 {
+    margin-top: 0;
+    color: var(--accent-color);
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+#activation-modal p {
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+#activate-account-btn {
+    background-color: var(--accent-color);
+    color: var(--base-color);
+    border: none;
+    padding: 12px 40px;
+    border-radius: 1000px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 150ms ease-in-out;
+    text-transform: uppercase;
+}
+
+#activate-account-btn:hover:not(:disabled) {
+    background-color: var(--text-color);
+}
+
+#activate-account-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#activation-status {
+    margin-top: 15px;
+    font-size: 14px;
+    min-height: 20px;
+}
  
 
