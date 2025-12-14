@@ -126,38 +126,56 @@ body {
     flex: 1;
     gap: 2rem;
     padding: 2rem;
-    max-width: 1400px;
+    max-width: 1200px; /* Reduced from 1400px for better centering */
     margin: 0 auto;
     width: 100%;
     overflow: hidden;
     align-items: stretch;
+    justify-content: center; /* Center the content */
     height: calc(100vh - 70px);
     max-height: calc(100vh - 70px);
 }
 
-/*  TIMER SECTION (LEFT)     */
-.timer-section {
-    flex: 1;
-    display: flex;
-    align-items: stretch;
-    justify-content: center;
+/* Responsive: Stack vertically on smaller screens */
+@media (max-width: 1024px) {
+    .main-wrapper {
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+        min-height: calc(100vh - 70px);
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+    
+    .timer-section {
+        width: 100%;
+        max-width: 500px;
+        flex: 0 0 auto;
+    }
+    
+    .tasks-section {
+        width: 100%;
+        max-width: 600px;
+        flex: 0 0 auto;
+        min-height: 400px;
+    }
+    
+    .timer-wrapper {
+        width: 300px;
+        height: 300px;
+    }
 }
 
-.container {
+/*  TIMER SECTION (LEFT) - No Rectangle Container     */
+.timer-section {
+    flex: 0 0 auto; /* Don't stretch, just fit content */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 30px;
-    color: var(--text-color);
-    background: var(--base-color);
-    border: 2px solid var(--input-color);
-    border-radius: 2em;
-    padding: 2em 3em;
-    animation: fadeInUp 0.6s ease-out;
-    width: 100%;
-    max-width: 600px;
-    min-height: 100%;
+    gap: 2rem;
+    padding: 2rem;
+    /* No background, no border - just floating elements */
 }
 
 
@@ -192,14 +210,78 @@ body {
     color: var(--accent-color);
 }
 
-.timer {
-    font-size: clamp(3em, 12vw, 6em);
+/* Circular Timer Wrapper */
+.timer-wrapper {
+    position: relative;
+    width: 500px; /* Slightly larger for better visibility */
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.timer-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    /* No background, no border - just the rings and text */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Progress Ring (Outer Ring Only - No Inner Ring) */
+.timer-progress-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(
+        from 0deg,
+        var(--primary-purple) 0deg,
+        var(--primary-purple) 0deg,
+        var(--border-light) 0deg,
+        var(--border-light) 360deg
+    );
+    /* Create outer ring only using mask - thicker ring, no inner ring */
+    mask: radial-gradient(
+        circle,
+        transparent calc(50% - 12px),
+        black calc(50% - 12px),
+        black 50%,
+        transparent 50%
+    );
+    -webkit-mask: radial-gradient(
+        circle,
+        transparent calc(50% - 12px),
+        black calc(50% - 12px),
+        black 50%,
+        transparent 50%
+    );
+    transform: rotate(-90deg); /* Start from top (12 o'clock) */
+    transition: background 0.1s linear;
+    pointer-events: none;
+}
+
+/* Timer Text (Centered Inside Circle) */
+.timer-text {
+    position: relative;
+    z-index: 10;
+    font-size: clamp(2.5rem, 8vw, 4rem);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     color: var(--accent-color);
     letter-spacing: 0.05em;
-    transition: transform 0.3s ease;
+    pointer-events: none;
     line-height: 1;
+}
+
+/* Legacy timer class - hidden for backward compatibility */
+.timer {
+    display: none;
 }
 
 .button-wrapper {
@@ -412,16 +494,12 @@ body {
         width: 100%;
     }
     
-    .timer {
-        font-size: clamp(3em, 12vw, 5em);
-    }
-
     .tasks-section {
         width: 100%;
         max-width: 600px;
         margin: 0 auto;
         flex-shrink: 1;
-        min-height: 400px;
+        min-height: 350px;
         max-height: none;
         height: auto;
         overflow: visible;
@@ -461,7 +539,15 @@ body {
         flex: 1;
         min-width: 150px;
     }
-   
+
+    .mode-selector {
+        gap: 0.75rem;
+    }
+
+    .mode-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.95rem;
+    }
 }
 
 
@@ -474,19 +560,6 @@ body {
         padding-top: 70px;
     }
 
-    .app-nav-container {
-        padding: 0 1rem;
-    }
-
-    .app-logo-text {
-        font-size: 1.25rem;
-    }
-
-    .app-nav-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-    }
-
     .main-wrapper {
         padding: 0.75rem;
         gap: 1rem;
@@ -494,23 +567,14 @@ body {
         min-height: calc(100vh - 70px);
     }
 
-    .container {
-        padding: 1.5em 1.5em;
-        min-height: 350px;
-        gap: 15px;
-    }
-
-    .timer {
-        font-size: clamp(2.5em, 15vw, 4em);
-    }
-    
-    .title {
-        font-size: 1.8em;
+    .timer-section {
+        padding: 1rem;
+        gap: 1rem;
     }
 
     .tasks-section {
         padding: 1em;
-        min-height: 350px;
+        min-height: 300px;
         max-height: none;
         height: auto;
         overflow: visible;
@@ -542,13 +606,17 @@ body {
     }
 
     .mode-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
+        padding: 0.5rem 0.9rem;
+        font-size: 0.85rem;
+        flex: 1;
+        min-width: 0;
     }
 
     #start-btn {
-        padding: 0.75em 2em;
-        font-size: 1em;
+        padding: 0.65em 1.5em;
+        font-size: 0.95em;
+        max-width: 200px;
+        width: 100%;
     }
 
     .task-item {
@@ -559,5 +627,16 @@ body {
     .task-delete {
         padding: 0.4rem 0.8rem;
         font-size: 0.85rem;
+    }
+
+    /* Responsive Circular Timer */
+    .timer-wrapper {
+        width: 250px;
+        height: 250px;
+        margin: 1rem 0;
+    }
+
+    .timer-text {
+        font-size: clamp(2rem, 8vw, 2.5rem);
     }
 }

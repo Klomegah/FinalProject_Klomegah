@@ -1,26 +1,31 @@
 // ENHANCED POMODORO TIMER - STATE MANAGEMENT
 
-// Timer modes configuration
+// Timer modes configuration - TESTING ONLY
 const timerModes = {
-    pomodoro: 1500,    // 25 minutes
-    'short-break': 300, // 5 minutes
-    'long-break': 900  // 15 minutes
+    pomodoro: 10,    // Changed from 1500 to 10 seconds for testing
+    'short-break': 5, 
+    'long-break': 10
 };
 
 // Why: Using a state object keeps all timer data organized and makes debugging easier
+
 const timerState = {
-    timeLeft: 1500, // 25 minutes in seconds (default Pomodoro length)
+    timeLeft: 1500, // 25 minutes in seconds (remaining time)
     isRunning: false,
     intervalId: null,
     currentMode: 'pomodoro', // Current timer mode
-    defaultTime: 1500 // Store default so we can reset easily
+    defaultTime: 1500, // Store default so we can reset easily
+    targetEndTime: null, // Timestamp when timer should end (milliseconds)
+    pausedTimeLeft: null, // Remaining time when paused (for resume)
+    consecutiveSkips: 0 // Track how many times user skipped reflection
 };
 
 // DOM element references
 // Why: Caching DOM elements improves performance and makes code cleaner
+
 const elements = {
     startButton: document.getElementById('start-btn'),
-    timerDisplay: document.getElementById('timer'),
+    timerDisplay: document.querySelector('.timer-text'), // CHANGED - use querySelector for class
     taskInput: document.getElementById('task-input'),
     tasksList: document.getElementById('tasks-list'),
     modeButtons: document.querySelectorAll('.mode-btn')
@@ -42,12 +47,45 @@ function formatTime(seconds) {
 }
 
 /**
+ * Calculates progress percentage (0-100) based on remaining time
+ * Why: Separate function makes it reusable and testable
+ */
+function calculateProgress() {
+    const totalTime = timerState.defaultTime; // e.g., 1500 seconds
+    const remainingTime = timerState.timeLeft; // e.g., 750 seconds
+    const elapsedTime = totalTime - remainingTime;
+    const percentage = (elapsedTime / totalTime) * 100;
+    return Math.min(100, Math.max(0, percentage)); // Clamp between 0-100
+}
+
+/**
  * Updates the timer display
  * Why: Single function for UI updates ensures consistency
+ * Now calculates time based on actual system time for accuracy
  */
 
 function updateTimerDisplay() {
-    elements.timerDisplay.textContent = formatTime(timerState.timeLeft);
+    let remainingSeconds = timerState.timeLeft;
+    
+    // If timer is running, calculate remaining time from target end time
+    if (timerState.isRunning && timerState.targetEndTime) {
+        const now = Date.now();
+        const remaining = Math.max(0, Math.floor((timerState.targetEndTime - now) / 1000));
+        remainingSeconds = remaining;
+        timerState.timeLeft = remainingSeconds; // Keep state in sync
+        
+        // Check if timer reached zero
+        if (remainingSeconds <= 0) {
+            completeTimer();
+            return;
+        }
+    }
+    
+    // Update timer text display
+    elements.timerDisplay.textContent = formatTime(remainingSeconds);
+    
+    // Update circular progress ring
+    updateProgressRing();
     
     // Visual feedback: Add pulsing animation when timer is running
     if (timerState.isRunning) {
@@ -55,6 +93,34 @@ function updateTimerDisplay() {
     } else {
         elements.timerDisplay.style.animation = 'none';
     }
+}
+
+/**
+ * Updates the circular progress ring based on timer progress
+ * Uses CSS conic-gradient for smooth, continuous progress arc
+ */
+
+function updateProgressRing() {
+    const progressRing = document.getElementById('progress-ring');
+    if (!progressRing) return; // Safety check
+    
+    // Get CSS variable values for colors
+    const rootStyles = getComputedStyle(document.documentElement);
+    const purpleColor = rootStyles.getPropertyValue('--primary-purple').trim() || '#8672FF';
+    const lightColor = rootStyles.getPropertyValue('--border-light').trim() || '#E5E5E5';
+    
+    const progress = calculateProgress(); // 0-100 percentage
+    const angle = (progress / 100) * 360; // Convert to degrees (0-360)
+    
+    // Update conic-gradient for smooth continuous progress
+    // Arc depletes clockwise (starts full, reduces as time decreases)
+    progressRing.style.background = `conic-gradient(
+        from 0deg,
+        ${purpleColor} 0deg,
+        ${purpleColor} ${angle}deg,
+        ${lightColor} ${angle}deg,
+        ${lightColor} 360deg
+    )`;
 }
 
 /**
@@ -75,6 +141,7 @@ function updateButtonStates() {
 /**
  * Switches timer mode (Pomodoro, Short Break, Long Break)
  */
+
 function switchMode(mode) {
     if (timerState.isRunning) {
         pauseTimer();
@@ -83,6 +150,8 @@ function switchMode(mode) {
     timerState.currentMode = mode;
     timerState.defaultTime = timerModes[mode];
     timerState.timeLeft = timerModes[mode];
+    timerState.targetEndTime = null;
+    timerState.pausedTimeLeft = null;
     
     // Update active mode button
     elements.modeButtons.forEach(btn => {
@@ -93,7 +162,8 @@ function switchMode(mode) {
         }
     });
     
-    updateTimerDisplay();
+    // Reset progress ring when switching modes
+    updateTimerDisplay(); // This will reset the ring to 0% via updateProgressRing()
     updateButtonStates();
 }
 
@@ -108,29 +178,36 @@ function startTimer() {
     // Prevent starting if already running
     if (timerState.isRunning) return;
     
-    // Generate session ID when timer starts
-    if (!currentSessionId) {
-        currentSessionId = Date.now().toString();
+    // Session ID will be generated when session is saved to database
+
+    // Calculate target end time based on current time + remaining time
+    const now = Date.now();
+    const durationMs = timerState.timeLeft * 1000; // Convert seconds to milliseconds
+    
+    // If resuming from pause, use the paused time left
+    if (timerState.pausedTimeLeft !== null) {
+        timerState.targetEndTime = now + (timerState.pausedTimeLeft * 1000);
+        timerState.timeLeft = timerState.pausedTimeLeft;
+        timerState.pausedTimeLeft = null;
+    } else {
+        // Starting fresh - use current timeLeft
+        timerState.targetEndTime = now + durationMs;
     }
     
     timerState.isRunning = true;
     updateButtonStates();
     
-    // Why: Using setInterval with proper cleanup prevents memory leaks
+    // Update display every second using actual system time
+    // This ensures accuracy even if the interval is slightly off
+
     timerState.intervalId = setInterval(() => {
-        timerState.timeLeft--;
         updateTimerDisplay();
-        
-        // Check if timer reached zero
-        if (timerState.timeLeft <= 0) {
-            completeTimer();
-        }
-    }, 1000);
+    }, 100); // Update more frequently for smoother display (every 100ms)
     
     // Update display immediately
     updateTimerDisplay();
     
-    // Play notification sound (optional enhancement)
+    // Play notification sound on start 
     playNotification('start');
 }
 
@@ -142,7 +219,16 @@ function startTimer() {
 function pauseTimer() {
     if (!timerState.isRunning) return;
     
+    // Calculate remaining time when pausing
+    if (timerState.targetEndTime) {
+        const now = Date.now();
+        const remaining = Math.max(0, Math.floor((timerState.targetEndTime - now) / 1000));
+        timerState.pausedTimeLeft = remaining;
+        timerState.timeLeft = remaining;
+    }
+    
     timerState.isRunning = false;
+    timerState.targetEndTime = null;
     clearInterval(timerState.intervalId);
     timerState.intervalId = null;
     
@@ -172,7 +258,9 @@ function resetTimer() {
     }
     
     timerState.timeLeft = timerState.defaultTime;
-    updateTimerDisplay();
+    timerState.targetEndTime = null;
+    timerState.pausedTimeLeft = null;
+    updateTimerDisplay(); // This will reset the ring to 0% via updateProgressRing()
     updateButtonStates();
 }
 
@@ -194,23 +282,8 @@ function completeTimer() {
         return;
     }
     
-    // For Pomodoro sessions, create session data and show modal
-    const sessionData = {
-        sessionId: currentSessionId || Date.now().toString(),
-        date: new Date().toISOString(),
-        duration: timerModes.pomodoro,
-        tasks: tasks.filter(t => !t.completed).map(t => t.text),
-        completedTasks: tasks.filter(t => t.completed).map(t => t.text)
-    };
-    
-    // Store session data in localStorage
-    const sessions = JSON.parse(localStorage.getItem('pomodoroSessions') || '[]');
-    sessions.push(sessionData);
-    localStorage.setItem('pomodoroSessions', JSON.stringify(sessions));
-    localStorage.setItem('currentSession', JSON.stringify(sessionData));
-    
-    // Show modal asking if they want to continue or proceed to Feynman notes
-    showSessionCompleteModal();
+    // For Pomodoro sessions, save to database and show modal
+    saveSessionToDatabase();
     
     // Reset to default time
     timerState.timeLeft = timerState.defaultTime;
@@ -252,9 +325,40 @@ function showCompletionNotification(message = "Time's up! Great work!") {
 }
 
 /**
- * Shows a modal asking if user wants to continue or proceed to Feynman notes
+ * Load skip counter from localStorage
  */
+function loadSkipCounter() {
+    const saved = localStorage.getItem('consecutiveSkips');
+    if (saved !== null) {
+        timerState.consecutiveSkips = parseInt(saved, 10);
+    }
+}
+
+/**
+ * Save skip counter to localStorage
+ */
+function saveSkipCounter() {
+    localStorage.setItem('consecutiveSkips', timerState.consecutiveSkips.toString());
+}
+
+/**
+ * Reset skip counter 
+ */
+function resetSkipCounter() {
+    timerState.consecutiveSkips = 0;
+    saveSkipCounter();
+}
+
+/**
+ * Shows a modal asking if user wants to continue or proceed to Feynman notes
+ * Modal variant changes based on consecutiveSkips count:
+ * - 0 skips: Normal modal with equal choice
+ * - 1 skip: Warning modal nudging towards reflection
+ * - 2+ skips: Mandatory modal forcing reflection on 3rd second skip
+ */
+
 function showSessionCompleteModal() {
+    const skipCount = timerState.consecutiveSkips;
     
     // Create modal overlay
     const overlay = document.createElement('div');
@@ -289,35 +393,102 @@ function showSessionCompleteModal() {
         font-family: 'Poppins', sans-serif;
     `;
     
+    // Determine modal content based on skip count
+    let title, message, buttons;
+    
+    if (skipCount === 0) {
+        // NORMAL MODAL - First session, no pressure
+        title = 'Session Complete!';
+        message = 'What would you like to do next?';
+        buttons = `
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button id="continue-session-btn" style="
+                    padding: 1em 2em;
+                    border: none;
+                    border-radius: 12px;
+                    background: #8672FF;
+                    color: white;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    font-family: 'Poppins', sans-serif;
+                ">Continue Session</button>
+                <button id="feynman-notes-btn" style="
+                    padding: 1em 2em;
+                    border: 2px solid #8672FF;
+                    border-radius: 12px;
+                    background: white;
+                    color: #8672FF;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    font-family: 'Poppins', sans-serif;
+                ">Go to Feynman Notes</button>
+            </div>
+        `;
+
+    } else if (skipCount === 1) {
+        // WARNING MODAL - Second session, nudge towards reflection
+        title = 'Great Session!';
+        message = "You've completed 2 sessions without reflecting. Taking notes helps solidify your learning!";
+        buttons = `
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button id="feynman-notes-btn" style="
+                    padding: 1em 2em;
+                    border: none;
+                    border-radius: 12px;
+                    background: #8672FF;
+                    color: white;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    font-family: 'Poppins', sans-serif;
+                    box-shadow: 0 4px 12px rgba(134, 114, 255, 0.3);
+                ">Go to Feynman Notes </button>
+                <button id="continue-session-btn" style="
+                    padding: 1em 2em;
+                    border: 2px solid #8672FF;
+                    border-radius: 12px;
+                    background: white;
+                    color: #8672FF;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    font-family: 'Poppins', sans-serif;
+                ">Skip (Not Recommended)</button>
+            </div>
+        `;
+    } else {
+        // MANDATORY MODAL - Third session, must reflect
+        title = 'Time to Reflect!';
+        message = "You've completed 3 sessions. Let's consolidate your learning with Feynman notes before continuing.";
+        buttons = `
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button id="feynman-notes-btn" style="
+                    padding: 1em 2em;
+                    border: none;
+                    border-radius: 12px;
+                    background: #8672FF;
+                    color: white;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    font-family: 'Poppins', sans-serif;
+                    box-shadow: 0 4px 12px rgba(134, 114, 255, 0.3);
+                ">Go to Feynman Notes</button>
+            </div>
+        `;
+    }
+    
     modal.innerHTML = `
-        <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; color: #1A1A1A;">Session Complete!</h2>
-        <p style="color: #4A4A4A; margin-bottom: 2rem; font-size: 1.1rem;">What would you like to do next?</p>
-        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-            <button id="continue-session-btn" style="
-                padding: 1em 2em;
-                border: none;
-                border-radius: 12px;
-                background: #8672FF;
-                color: white;
-                font-weight: 600;
-                font-size: 1rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-family: 'Poppins', sans-serif;
-            ">Continue Session</button>
-            <button id="feynman-notes-btn" style="
-                padding: 1em 2em;
-                border: 2px solid #8672FF;
-                border-radius: 12px;
-                background: white;
-                color: #8672FF;
-                font-weight: 600;
-                font-size: 1rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-family: 'Poppins', sans-serif;
-            ">Go to Feynman Notes</button>
-        </div>
+        <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; color: #1A1A1A;">${title}</h2>
+        <p style="color: #4A4A4A; margin-bottom: 2rem; font-size: 1.1rem;">${message}</p>
+        ${buttons}
     `;
     
     overlay.appendChild(modal);
@@ -327,47 +498,58 @@ function showSessionCompleteModal() {
     const continueBtn = modal.querySelector('#continue-session-btn');
     const feynmanBtn = modal.querySelector('#feynman-notes-btn');
     
-    continueBtn.addEventListener('mouseenter', () => {
-        continueBtn.style.transform = 'translateY(-2px)';
-        continueBtn.style.boxShadow = '0 4px 12px rgba(134, 114, 255, 0.4)';
-    });
-    continueBtn.addEventListener('mouseleave', () => {
-        continueBtn.style.transform = 'translateY(0)';
-        continueBtn.style.boxShadow = 'none';
-    });
+    // Continue button 
+    if (continueBtn) {
+        continueBtn.addEventListener('mouseenter', () => {
+            continueBtn.style.transform = 'translateY(-2px)';
+            continueBtn.style.boxShadow = '0 4px 12px rgba(134, 114, 255, 0.4)';
+        });
+        continueBtn.addEventListener('mouseleave', () => {
+            continueBtn.style.transform = 'translateY(0)';
+            continueBtn.style.boxShadow = skipCount === 1 ? 'none' : 'none';
+        });
+        
+        continueBtn.addEventListener('click', () => {
+            // Increment skip counter
+            timerState.consecutiveSkips++;
+            saveSkipCounter();
+            
+            overlay.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => overlay.remove(), 300);
+            switchMode('short-break');
+        });
+    }
     
+    // Feynman notes button
     feynmanBtn.addEventListener('mouseenter', () => {
         feynmanBtn.style.transform = 'translateY(-2px)';
-        feynmanBtn.style.boxShadow = '0 4px 12px rgba(134, 114, 255, 0.2)';
+        feynmanBtn.style.boxShadow = '0 4px 12px rgba(134, 114, 255, 0.4)';
     });
     feynmanBtn.addEventListener('mouseleave', () => {
         feynmanBtn.style.transform = 'translateY(0)';
-        feynmanBtn.style.boxShadow = 'none';
-    });
-    
-    continueBtn.addEventListener('click', () => {
-        overlay.style.animation = 'fadeOut 0.3s ease-out';
-        setTimeout(() => overlay.remove(), 300);
-
-        // Switch to short break
-        switchMode('short-break');
+        feynmanBtn.style.boxShadow = skipCount === 1 ? '0 4px 12px rgba(134, 114, 255, 0.3)' : (skipCount >= 2 ? '0 4px 12px rgba(134, 114, 255, 0.3)' : 'none');
     });
     
     feynmanBtn.addEventListener('click', () => {
+        // Reset skip counter when user goes to Feynman notes
+        resetSkipCounter();
         window.location.href = '../FeynmanPages/feynmannotes-html.php';
     });
     
-
-    // Close on overlay click
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) {
-            overlay.style.animation = 'fadeOut 0.3s ease-out';
-            setTimeout(() => overlay.remove(), 300);
-
-            // Default to continuing session if clicked outside
-            switchMode('short-break');
-        }
-    });
+    // Close on overlay click (only if not mandatory)
+    if (skipCount < 2) {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                // Increment skip counter
+                timerState.consecutiveSkips++;
+                saveSkipCounter();
+                
+                overlay.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => overlay.remove(), 300);
+                switchMode('short-break');
+            }
+        });
+    }
     
     // Add CSS animations 
     if (!document.getElementById('modal-animations')) {
@@ -455,34 +637,122 @@ function playNotification(type = 'start') {
 
 // TASKS MANAGEMENT
 
-function addTask(text) {
+async function addTask(text) {
     if (!text.trim()) return;
     
-    const task = {
-        id: Date.now().toString(),
-        text: text.trim(),
-        completed: false
-    };
+    const taskText = text.trim();
     
-    tasks.push(task);
-    renderTasks();
-    saveTasks();
-    elements.taskInput.value = '';
-}
+    try {
+        const response = await fetch(`../Tasks/create_task.php`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({
+                task_text: taskText
+            })
+        });
 
-function toggleTask(id) {
-    const task = tasks.find(t => t.id === id);
-    if (task) {
-        task.completed = !task.completed;
-        renderTasks();
-        saveTasks();
+        const data = await response.json();
+        
+        if (data.success) {
+            // Add task to local array with database ID
+            const task = {
+                id: data.task_id.toString(),
+                text: taskText,
+                completed: false
+            };
+            
+            tasks.push(task);
+            renderTasks();
+            elements.taskInput.value = '';
+        } else {
+            console.error('Failed to create task:', data.error || 'Unknown error');
+            alert('Failed to add task. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error creating task:', error);
+        alert('Error adding task. Please check your connection and try again.');
     }
 }
 
-function deleteTask(id) {
+async function toggleTask(id) {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+    
+    const newCompletedStatus = !task.completed;
+    
+    try {
+        const response = await fetch(`../Tasks/update_task.php`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({
+                task_id: parseInt(id),
+                completed: newCompletedStatus
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            task.completed = newCompletedStatus;
+            renderTasks();
+        } else {
+             // Revert UI change on error
+            renderTasks();
+        }
+    } catch (error) {
+        
+        // Revert UI change on error
+        renderTasks();
+    }
+}
+
+async function deleteTask(id) {
+
+    // Automatically remove from UI
+    const taskIndex = tasks.findIndex(t => t.id === id);
+    if (taskIndex === -1) return;
+    
+    const taskToDelete = tasks[taskIndex];
     tasks = tasks.filter(t => t.id !== id);
     renderTasks();
-    saveTasks();
+    
+    try {
+        const response = await fetch(`../Tasks/delete_task.php`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({
+                task_id: parseInt(id)
+            })
+        });
+
+        const data = await response.json();
+        
+        if (!data.success) {
+            // Restore task on error
+            tasks.splice(taskIndex, 0, taskToDelete);
+            renderTasks();
+            console.error('Failed to delete task:', data.error || 'Unknown error');
+            alert('Failed to delete task. Please try again.');
+        }
+    } catch (error) {
+        // Restore task on error
+        tasks.splice(taskIndex, 0, taskToDelete);
+        renderTasks();
+        console.error('Error deleting task:', error);
+        alert('Error deleting task. Please check your connection and try again.');
+    }
 }
 
 function renderTasks() {
@@ -505,63 +775,132 @@ function renderTasks() {
     });
 }
 
-function saveTasks() {
-    localStorage.setItem('pomodoroTasks', JSON.stringify(tasks));
-}
+// Load tasks from database on page load
+async function loadTasks() {
+    try {
+        const response = await fetch('../Tasks/get_tasks.php', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin'
+        });
 
-function loadTasks() {
-    const saved = localStorage.getItem('pomodoroTasks');
-    if (saved) {
-        tasks = JSON.parse(saved);
+        const data = await response.json();
+        
+        if (data.success && data.tasks) {
+            tasks = data.tasks.map(task => ({
+                id: task.task_id.toString(),
+                text: task.task_text,
+                completed: task.completed
+            }));
+            renderTasks();
+        } else {
+            // If no tasks, just render empty list
+            renderTasks();
+        }
+    } catch (error) {
+        console.error('Error loading tasks:', error);
+        // Don't let task loading errors break the page - just show empty list
         renderTasks();
     }
 }
 
-// Task input event listener moved to DOMContentLoaded
+/**
+ * Saves completed Pomodoro session to database
+ */
 
-// EVENT LISTENERS
-// Why: Using addEventListener instead of inline handlers is best practice
-elements.startButton.addEventListener('click', toggleTimer);
-
-// Mode selector buttons
-elements.modeButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        switchMode(btn.dataset.mode);
-    });
-});
-
-// Keyboard shortcuts for better accessibility
-// Why: Keyboard support makes the app more accessible and faster to use
-document.addEventListener('keydown', (e) => {
-    // Prevent shortcuts when typing in inputs (if we add any later)
-    if (e.target.tagName === 'INPUT') return;
+async function saveSessionToDatabase() {
+    // Get current local time (not UTC) to avoid timezone offset issues
+    const now = new Date();
+    const localDateString = now.getFullYear() + '-' +
+        String(now.getMonth() + 1).padStart(2, '0') + '-' +
+        String(now.getDate()).padStart(2, '0') + ' ' +
+        String(now.getHours()).padStart(2, '0') + ':' +
+        String(now.getMinutes()).padStart(2, '0') + ':' +
+        String(now.getSeconds()).padStart(2, '0');
     
-    switch(e.key.toLowerCase()) {
-        case ' ':
-        case 's':
-            e.preventDefault();
-            toggleTimer();
-            break;
-        case 'r':
-            e.preventDefault();
-            resetTimer();
-            break;
-    }
-});
+    const sessionData = {
+        session_date: localDateString, // Send local time as formatted string
+        duration: timerModes.pomodoro,
+        mode: 'pomodoro',
+        tasks: tasks.filter(t => !t.completed).map(t => t.text),
+        completed_tasks: tasks.filter(t => t.completed).map(t => t.text)
+    };
+    
+    console.log('Attempting to save session:', sessionData); // Debug log remove later
+    
+    try {
+        const url = `../Sessions/create_session.php`;
 
-// Task input event listener
-if (elements.taskInput) {
-    elements.taskInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const taskText = elements.taskInput.value.trim();
-            if (taskText) {
-                addTask(taskText);
+        console.log('Fetching URL:', url); // Debug log, remove later
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify(sessionData)
+        });
+
+        console.log('Response status:', response.status, response.statusText); // Debug log
+        
+        if (!response.ok) {
+            // Try to get error message from response
+            let errorMessage = `HTTP error! status: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.error || errorData.message || errorMessage;
+            } catch (e) {
+                // If response isn't JSON, get as text
+                const textResponse = await response.text();
+                errorMessage = textResponse.substring(0, 200) || errorMessage;
             }
+            throw new Error(errorMessage);
         }
-    });
-} else {
-    console.error('Task input element not found!');
+
+        const data = await response.json();
+        
+        console.log('Session save response:', data); // Debug log
+        
+        if (data.success) {
+
+            // Store session ID for use in Feynman notes
+            currentSessionId = data.session_id.toString();
+            
+            // Also store in localStorage for Feynman notes compatibility (temporary)
+            const sessionForNotes = {
+                sessionId: currentSessionId,
+                date: sessionData.session_date,
+                duration: sessionData.duration,
+                tasks: sessionData.tasks,
+                completedTasks: sessionData.completed_tasks
+            };
+            localStorage.setItem('currentSession', JSON.stringify(sessionForNotes));
+            
+            console.log('Session saved successfully:', currentSessionId); // Debug log
+            
+            // Show modal asking if they want to continue or proceed to Feynman notes
+            showSessionCompleteModal();
+
+        } else {
+            console.error('Failed to save session:', data);
+            const errorMsg = data.error || 'Unknown error';
+            const dbError = data.db_error ? ` Database error: ${data.db_error}` : '';
+            alert(`Failed to save session: ${errorMsg}${dbError}`);
+
+            // Still show modal even if save failed
+            showSessionCompleteModal();
+        }
+    } catch (error) {
+        console.error('Error saving session:', error);
+        alert(`Error saving session: ${error.message}. Please check your connection and the browser console.`);
+        // Still show modal even if save failed
+        showSessionCompleteModal();
+    }
 }
 
 // Make functions globally available for inline handlers
@@ -570,11 +909,33 @@ window.deleteTask = deleteTask;
 
 // INITIALIZATION
 
+// Add event listener to start button
+elements.startButton.addEventListener('click', toggleTimer);
+
+// Add event listener to task input (Enter key)
+elements.taskInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        addTask(elements.taskInput.value);
+    }
+});
+
+// Add event listeners to mode buttons
+elements.modeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        switchMode(btn.dataset.mode);
+    });
+    
+    // Set initial active state
+    if (btn.dataset.mode === timerState.currentMode) {
+        btn.classList.add('active');
+    }
+});
+
 // Initialize the timer display and button states
-// Why: Ensures UI is correct on page load
 updateTimerDisplay();
 updateButtonStates();
 loadTasks();
+loadSkipCounter();
 
 // Reset session ID when timer resets
 const originalResetTimer = resetTimer;
@@ -584,11 +945,6 @@ resetTimer = function() {
     originalResetTimer();
 };
 
-// Initialize mode selector
-elements.modeButtons.forEach(btn => {
-    if (btn.dataset.mode === timerState.currentMode) {
-        btn.classList.add('active');
-    }
-});
+
 
 
