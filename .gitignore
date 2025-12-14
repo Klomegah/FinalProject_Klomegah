@@ -21,4 +21,8 @@ rad.json
 #Test results file
 TestResults.xml
 
-connect.env
+
+#Ignore environment files
+*.env
+
+env/
