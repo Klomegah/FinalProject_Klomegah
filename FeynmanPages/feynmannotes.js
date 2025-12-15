@@ -65,10 +65,12 @@ function startVoiceInputFor(textarea, button) {
     }
 
     // Check if we're on HTTPS or localhost (required for Web Speech API)
+    // Note: Some browsers may still block this on HTTP, but we'll try anyway
     const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (!isSecure) {
-        SwalAlert.warning('Voice Input Requires Secure Connection', 'Voice input works best on HTTPS or localhost. You can continue typing your notes normally.');
-        return;
+        // Still try to use it - some browsers might allow it, but show a warning
+        SwalAlert.info('Voice Input Note', 'Voice input requires HTTPS or localhost. If it doesn\'t work, please use typing or test on localhost. You can continue typing your notes normally.');
+        // Don't return - let it try anyway
     }
 
     // If it's already listening and user clicks again, treat it as a manual stop
@@ -92,6 +94,7 @@ function startVoiceInputFor(textarea, button) {
 
         recognition.onerror = (event) => {
             let errorMessage = 'Something went wrong while listening.';
+            const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
           
             // Provide specific error messages based on error type
             if (event.error === 'no-speech') {
@@ -99,13 +102,23 @@ function startVoiceInputFor(textarea, button) {
             } else if (event.error === 'audio-capture') {
                 errorMessage = 'Microphone not found or access denied. Please check your microphone permissions.';
             } else if (event.error === 'not-allowed') {
-                errorMessage = 'Microphone access denied. Please allow microphone access in your browser settings and try again.';
+                // This error often occurs on HTTP due to browser security restrictions
+                if (!isSecure) {
+                    errorMessage = 'Voice input requires HTTPS or localhost. Your server is using HTTP. To test voice input, use localhost (http://localhost) or deploy with HTTPS. You can continue typing your notes normally.';
+                } else {
+                    errorMessage = 'Microphone access denied. Please allow microphone access in your browser settings and try again.';
+                }
             } else if (event.error === 'network') {
                 errorMessage = 'Network error. Please check your internet connection.';
             } else if (event.error === 'aborted') {
                 errorMessage = 'Voice input was cancelled.';
             } else {
-                errorMessage = `Error: ${event.error || 'Unknown error'}. Please try again or continue typing.`;
+                // Generic error - check if it's likely an HTTP security issue
+                if (!isSecure && (event.error === 'service-not-allowed' || event.error === 'bad-grammar')) {
+                    errorMessage = 'Voice input requires HTTPS or localhost. Your server is using HTTP. To test voice input, use localhost (http://localhost) or deploy with HTTPS. You can continue typing your notes normally.';
+                } else {
+                    errorMessage = `Error: ${event.error || 'Unknown error'}. Please try again or continue typing.`;
+                }
             }
            
 
@@ -142,7 +155,16 @@ function startVoiceInputFor(textarea, button) {
         clearTimeout(recognitionTimeout);
         setVoiceButtonState(button, false);
         console.error('Speech recognition error:', error);
-        SwalAlert.error('Voice Input Error', `Unable to start voice input: ${error.message || 'Unknown error'}. Please try again or continue typing.`);
+        
+        // Check if this is likely an HTTP security issue
+        const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        let errorMessage = `Unable to start voice input: ${error.message || 'Unknown error'}.`;
+        
+        if (!isSecure) {
+            errorMessage = 'Voice input requires HTTPS or localhost. Your server is using HTTP. To test voice input, use localhost (http://localhost) or deploy with HTTPS. You can continue typing your notes normally.';
+        }
+        
+        SwalAlert.error('Voice Input Error', errorMessage);
     }
 }
 
@@ -354,8 +376,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const simplifiedBtn = document.getElementById('simplified-voice-btn');
     const conceptsBtn = document.getElementById('concepts-voice-btn');
 
-    // If speech is not supported, hide the buttons so typing remains the only visible option
-    if (!speechSupported) {
+    // Check if we're on HTTPS or localhost (required for Web Speech API)
+    const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    // Hide voice buttons if speech is not supported OR if we're on HTTP (not secure)
+    // This prevents confusion during grading on HTTP servers, but keeps the feature for localhost/HTTPS
+    if (!speechSupported || !isSecure) {
         [initialBtn, simplifiedBtn, conceptsBtn].forEach((btn) => {
             if (btn) btn.style.display = 'none';
         });

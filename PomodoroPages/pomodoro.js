@@ -643,22 +643,22 @@ async function addTask(text) {
     const taskText = text.trim();
     
     const result = await apiRequest('../Tasks/create_task.php', {
-        method: 'POST',
+            method: 'POST',
         body: { task_text: taskText }
-    });
-    
+        });
+
     if (result.success && result.data.success) {
-        // Add task to local array with database ID
-        const task = {
+            // Add task to local array with database ID
+            const task = {
             id: result.data.task_id.toString(),
-            text: taskText,
-            completed: false
-        };
-        
-        tasks.push(task);
-        renderTasks();
-        elements.taskInput.value = '';
-    } else {
+                text: taskText,
+                completed: false
+            };
+            
+            tasks.push(task);
+            renderTasks();
+            elements.taskInput.value = '';
+        } else {
         SwalAlert.error('Failed to Add Task', result.error || 'Please try again.');
     }
 }
@@ -670,17 +670,17 @@ async function toggleTask(id) {
     const newCompletedStatus = !task.completed;
     
     const result = await apiRequest('../Tasks/update_task.php', {
-        method: 'PUT',
+            method: 'PUT',
         body: {
-            task_id: parseInt(id),
-            completed: newCompletedStatus
+                task_id: parseInt(id),
+                completed: newCompletedStatus
         }
-    });
-    
+        });
+
     if (result.success && result.data.success) {
-        task.completed = newCompletedStatus;
-        renderTasks();
-    } else {
+            task.completed = newCompletedStatus;
+            renderTasks();
+        } else {
         // Revert UI change on error
         renderTasks();
     }
@@ -700,9 +700,9 @@ async function deleteTask(id) {
     });
     
     if (!result.success || !result.data.success) {
-        // Restore task on error
-        tasks.splice(taskIndex, 0, taskToDelete);
-        renderTasks();
+            // Restore task on error
+            tasks.splice(taskIndex, 0, taskToDelete);
+            renderTasks();
         SwalAlert.error('Failed to Delete Task', result.error || 'Please try again.');
     }
 }
@@ -737,11 +737,11 @@ async function loadTasks() {
         tasks = result.data.tasks.map(task => ({
             id: task.id.toString(),
             text: task.text,
-            completed: task.completed
-        }));
-        renderTasks();
-    } else {
-        // If no tasks, just render empty list
+                completed: task.completed
+            }));
+            renderTasks();
+        } else {
+            // If no tasks, just render empty list
         renderTasks();
     }
 }
@@ -769,31 +769,31 @@ async function saveSessionToDatabase() {
     };
     
     const result = await apiRequest('../Sessions/create_session.php', {
-        method: 'POST',
+            method: 'POST',
         body: sessionData
     });
     
     if (result.success && result.data.success) {
-        // Store session ID for use in Feynman notes
+            // Store session ID for use in Feynman notes
         currentSessionId = result.data.session_id.toString();
-        
-        // Also store in localStorage for Feynman notes compatibility (temporary)
-        const sessionForNotes = {
-            sessionId: currentSessionId,
-            date: sessionData.session_date,
-            duration: sessionData.duration,
-            tasks: sessionData.tasks,
-            completedTasks: sessionData.completed_tasks
-        };
-        localStorage.setItem('currentSession', JSON.stringify(sessionForNotes));
-        
-        // Show modal asking if they want to continue or proceed to Feynman notes
-        showSessionCompleteModal();
-    } else {
+            
+            // Also store in localStorage for Feynman notes compatibility (temporary)
+            const sessionForNotes = {
+                sessionId: currentSessionId,
+                date: sessionData.session_date,
+                duration: sessionData.duration,
+                tasks: sessionData.tasks,
+                completedTasks: sessionData.completed_tasks
+            };
+            localStorage.setItem('currentSession', JSON.stringify(sessionForNotes));
+            
+            // Show modal asking if they want to continue or proceed to Feynman notes
+            showSessionCompleteModal();
+        } else {
         const errorMsg = result.error || result.data?.error || 'Unknown error';
         const dbError = result.data?.db_error ? ` Database error: ${result.data.db_error}` : '';
         SwalAlert.error('Failed to Save Session', `${errorMsg}${dbError}`);
-        
+
         // Still show modal even if save failed
         showSessionCompleteModal();
     }

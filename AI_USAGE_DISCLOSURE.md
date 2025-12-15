@@ -279,7 +279,7 @@ I took a **research-driven, learning-focused approach** to development:
 - Implemented 1-minute auto-stop feature
 - Integrated error handling for browser compatibility and HTTPS requirements
 
-**Extent of Use:** 50% AI (API integration guidance), 50% Me (styling, visual feedback, testing, refinement)
+**Extent of Use:** 50% AI (API integration guidance error handling and styling), 50% Me (guiding the styling and visual feedback, testing, refinement)
 
 ---
 

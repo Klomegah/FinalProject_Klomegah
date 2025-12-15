@@ -22,6 +22,7 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 - **Auto-save drafts** every 30 seconds (never lose your work)
 - **Linked to sessions** - Reflect on each completed Pomodoro
 - **Optional voice input for notes** - Click the mic icon to dictate when you're tired or don't feel like typing, then refine the text to reinforce learning
+  - **Note:** Voice input requires HTTPS or localhost (browser security requirement). On HTTP servers, the voice buttons are automatically hidden, but typing remains fully functional. Voice input works perfectly on localhost and production HTTPS environments.
 
 ###  Analytics & Reports
 - **Visual charts** showing your study progress
@@ -89,7 +90,7 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 
 ### 3. **Reflect with Feynman Notes**
    - After completing a session, you'll be redirected to Feynman notes
-   - Write your initial explanation (or click the mic icon to speak and let the app transcribe for you)
+   - Write your initial explanation (or click the mic icon to speak and let the app transcribe for you - **Note:** Voice input only appears on HTTPS or localhost due to browser security requirements)
    - Simplify it in your own words, editing the text to make it clearer
    - Extract key concepts to reinforce what you just explained
    - Click "Save" to store your reflection
@@ -156,6 +157,22 @@ All API endpoints follow RESTful conventions:
 
 ---
 
+## Browser Requirements & Feature Availability
+
+### Voice Input Feature
+- **Requires:** HTTPS or localhost (browser security requirement for Web Speech API)
+- **Behavior on HTTP:** Voice input buttons are automatically hidden to prevent confusion. Typing remains fully functional.
+- **Behavior on HTTPS/localhost:** Voice input buttons appear and function normally.
+- **Why:** Modern browsers require secure contexts (HTTPS) for microphone access to protect user privacy. This is a browser security feature, not a limitation of the application.
+
+### Testing Voice Input
+To test the voice input feature:
+1. Run the application on localhost (e.g., `http://localhost/FinalProject_Klomegah`)
+2. Or deploy to a server with HTTPS enabled
+3. The voice buttons will automatically appear when the secure context is detected
+
+---
+
 ## Known Issues & Future Improvements
 
 ### Current Limitations
@@ -164,6 +181,7 @@ All API endpoints follow RESTful conventions:
 - No background music feature (planned for future)
 - Analytics data cannot be exported (planned for future)
 - Database not optimized for large datasets and scalability (currently sufficient for small user base)
+- Voice input not available on HTTP servers (browser security requirement - works on localhost/HTTPS)
 
 ### Planned Features
 - Email-based account activation

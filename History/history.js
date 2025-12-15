@@ -22,9 +22,9 @@ async function loadSessions() {
     
     if (result.success && result.data.success && result.data.sessions) {
         allSessions = result.data.sessions;
-        filterAndDisplaySessions(currentFilter);
-    } else {
-        container.innerHTML = '<div class="no-sessions">No sessions found. Complete a Pomodoro session to see it here!</div>';
+            filterAndDisplaySessions(currentFilter);
+        } else {
+            container.innerHTML = '<div class="no-sessions">No sessions found. Complete a Pomodoro session to see it here!</div>';
     }
 }
 
@@ -167,13 +167,13 @@ async function deleteSession(sessionId) {
     // If deletion was successful, update the UI
     if (result.success && result.data.success) {
         // Remove the session from our local array so it disappears from the page
-        allSessions = allSessions.filter(s => s.session_id !== parseInt(sessionId));
+            allSessions = allSessions.filter(s => s.session_id !== parseInt(sessionId));
         // Re-display sessions with current filter applied
-        filterAndDisplaySessions(currentFilter);
-        
+            filterAndDisplaySessions(currentFilter);
+            
         // Show a success message to let the user know it worked
         SwalAlert.success('Session Deleted', 'Session deleted successfully!');
-    } else {
+        } else {
         // If something went wrong, show an error message
         SwalAlert.error('Failed to Delete Session', result.error || result.data?.error || 'Unknown error');
     }
