@@ -9,17 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
     exit;
 }
 
-// Get task_id from URL or request body
-$taskId = isset($_GET['task_id']) ? $_GET['task_id'] : null;
-
-// If not in URL, try to get from request body
-if (!$taskId) {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $taskId = isset($data['task_id']) ? $data['task_id'] : null;
-}
+// Get task_id from URL parameter (RESTful standard for DELETE)
+$taskId = isset($_GET['task_id']) ? intval($_GET['task_id']) : null;
 
 if (!$taskId) {
-    echo json_encode(['success' => false, 'error' => 'Task ID is required']);
+    echo json_encode(['success' => false, 'error' => 'Task ID is required in URL parameter']);
     exit;
 }
 
@@ -41,4 +35,5 @@ if ($stmt->execute()) {
 
 $stmt->close();
 ?>
+
 
