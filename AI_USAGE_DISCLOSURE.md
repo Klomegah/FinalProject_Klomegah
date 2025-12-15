@@ -417,7 +417,7 @@ The use of AI was a learning tool that helped me understand implementation patte
 | Account Activation | 70% | 30% | Research (PHPMailer) | I developed final solution |
 | Pomodoro Timer | 85% | 15% | YouTube | Core logic independent |
 | Styling & UI | 50% | 50% | Reference images | Heavily customized (analytics, profile, modal, history) |
-| Login/Signup Pages | 90% | 10% | YouTube + Lab + Team Project | Borrowed code, I built team interface |
+| Login/Signup Pages | 90% | 10% | YouTube + Lab + Team Project | Borrowed code, I built team interface so i just repurposed some parts|
 | Feynman Notes | 75% | 25% | YouTube | Imported independently |
 | Backend CRUD | 50% | 50% | Research | Described needs, understood code |
 | JavaScript (Most) | 30% | 70% | Research | Described needs, understood code |
@@ -435,10 +435,10 @@ The use of AI was a learning tool that helped me understand implementation patte
 1. **Planning:** I created detailed sketches and planned the entire architecture
 2. **Learning:** I studied YouTube tutorials, lab exercises, and team projects for foundational knowledge
 3. **Design Research:** I collected and analyzed 4 different app designs for inspiration
-4. **Problem-Solving:** I developed an alternative solution for account activation when AI suggestion was too complex
+4. **Problem-Solving:** I developed an alternative solution for account activation when the AI suggestion, i.e PHPMailer was too complex
 5. **Code Understanding:** I researched and understood all AI-generated code, building on class concepts
-6. **Customization:** I heavily modified all AI suggestions to match my exact requirements
-7. **Testing:** I independently tested all functionality to ensure backend works correctly
+6. **Customization:** I heavily modified all AI suggestions to match my exact requirements and taste
+7. **Testing:** I independently tested all functionality to ensure the backend works correctly
 8. **Organization:** I solely organized all folders and files based on MVC learning from class
 9. **Project Progression:** I maintained an initial codebase folder showing progression over weeks
 
@@ -457,7 +457,7 @@ I, Stephanie Klenam Klomegah, declare that:
 - I have maintained documentation of project progression over time (initial codebase folder)
 - This disclosure accurately represents the extent of AI usage and my contributions
 
-**Date:** [Date]
+**Date:** 15/12/2025
 **Project:** LockIn - Final Project
 
 ---
