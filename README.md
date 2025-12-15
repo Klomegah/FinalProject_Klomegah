@@ -9,7 +9,7 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 ## Features
 
 ###  Pomodoro Timer
-- **25-minute focus sessions** with customizable break periods
+- **25-minute focus sessions** with break periods
 - **Task management** integrated with timer
 - **Session tracking** to monitor your productivity
 - **Multiple modes:** Pomodoro, Short Break (5min), Long Break (15min)
