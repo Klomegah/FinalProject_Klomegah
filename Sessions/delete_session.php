@@ -9,17 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
     exit;
 }
 
-// Get session_id from URL or request body
-$sessionId = isset($_GET['session_id']) ? $_GET['session_id'] : null;
-
-// If not in URL, try to get from request body
-if (!$sessionId) {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $sessionId = isset($data['session_id']) ? $data['session_id'] : null;
-}
+// Get session_id from URL parameter (RESTful standard for DELETE)
+$sessionId = isset($_GET['session_id']) ? intval($_GET['session_id']) : null;
 
 if (!$sessionId) {
-    echo json_encode(['success' => false, 'error' => 'Session ID is required']);
+    echo json_encode(['success' => false, 'error' => 'Session ID is required in URL parameter']);
     exit;
 }
 
@@ -41,4 +35,5 @@ if ($stmt->execute()) {
 
 $stmt->close();
 ?>
+
 
