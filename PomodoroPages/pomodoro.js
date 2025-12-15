@@ -2,7 +2,7 @@
 
 // Timer modes configuration - TESTING ONLY
 const timerModes = {
-    pomodoro: 1500,    // Changed from 1500 to 10 seconds for testing
+    pomodoro: 1500,    // 25 minutes in seconds
     'short-break': 300, 
     'long-break': 900
 };
@@ -642,38 +642,24 @@ async function addTask(text) {
     
     const taskText = text.trim();
     
-    try {
-        const response = await fetch(`../Tasks/create_task.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify({
-                task_text: taskText
-            })
-        });
-
-        const data = await response.json();
+    const result = await apiRequest('../Tasks/create_task.php', {
+        method: 'POST',
+        body: { task_text: taskText }
+    });
+    
+    if (result.success && result.data.success) {
+        // Add task to local array with database ID
+        const task = {
+            id: result.data.task_id.toString(),
+            text: taskText,
+            completed: false
+        };
         
-        if (data.success) {
-            // Add task to local array with database ID
-            const task = {
-                id: data.task_id.toString(),
-                text: taskText,
-                completed: false
-            };
-            
-            tasks.push(task);
-            renderTasks();
-            elements.taskInput.value = '';
-        } else {
-            alert('Failed to add task. Please try again.');
-        }
-    } catch (error) {
-        console.error('Error creating task:', error);
-        alert('Error adding task. Please check your connection and try again.');
+        tasks.push(task);
+        renderTasks();
+        elements.taskInput.value = '';
+    } else {
+        SwalAlert.error('Failed to Add Task', result.error || 'Please try again.');
     }
 }
 
@@ -683,38 +669,24 @@ async function toggleTask(id) {
     
     const newCompletedStatus = !task.completed;
     
-    try {
-        const response = await fetch(`../Tasks/update_task.php`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify({
-                task_id: parseInt(id),
-                completed: newCompletedStatus
-            })
-        });
-
-        const data = await response.json();
-        
-        if (data.success) {
-            task.completed = newCompletedStatus;
-            renderTasks();
-        } else {
-             // Revert UI change on error
-            renderTasks();
+    const result = await apiRequest('../Tasks/update_task.php', {
+        method: 'PUT',
+        body: {
+            task_id: parseInt(id),
+            completed: newCompletedStatus
         }
-    } catch (error) {
-        
+    });
+    
+    if (result.success && result.data.success) {
+        task.completed = newCompletedStatus;
+        renderTasks();
+    } else {
         // Revert UI change on error
         renderTasks();
     }
 }
 
 async function deleteTask(id) {
-
     // Automatically remove from UI
     const taskIndex = tasks.findIndex(t => t.id === id);
     if (taskIndex === -1) return;
@@ -723,34 +695,15 @@ async function deleteTask(id) {
     tasks = tasks.filter(t => t.id !== id);
     renderTasks();
     
-    try {
-        const response = await fetch(`../Tasks/delete_task.php`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify({
-                task_id: parseInt(id)
-            })
-        });
-
-        const data = await response.json();
-        
-        if (!data.success) {
-            // Restore task on error
-            tasks.splice(taskIndex, 0, taskToDelete);
-            renderTasks();
-            console.error('Failed to delete task:', data.error || 'Unknown error');
-            alert('Failed to delete task. Please try again.');
-        }
-    } catch (error) {
+    const result = await apiRequest(`../Tasks/delete_task.php?task_id=${parseInt(id)}`, {
+        method: 'DELETE'
+    });
+    
+    if (!result.success || !result.data.success) {
         // Restore task on error
         tasks.splice(taskIndex, 0, taskToDelete);
         renderTasks();
-        console.error('Error deleting task:', error);
-        alert('Error deleting task. Please check your connection and try again.');
+        SwalAlert.error('Failed to Delete Task', result.error || 'Please try again.');
     }
 }
 
@@ -776,32 +729,19 @@ function renderTasks() {
 
 // Load tasks from database on page load
 async function loadTasks() {
-    try {
-        const response = await fetch('../Tasks/get_tasks.php', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin'
-        });
-
-        const data = await response.json();
-        
-        if (data.success && data.tasks) {
-            tasks = data.tasks.map(task => ({
-                id: task.task_id.toString(),
-                text: task.task_text,
-                completed: task.completed
-            }));
-            renderTasks();
-        } else {
-            // If no tasks, just render empty list
-            renderTasks();
-        }
-    } catch (error) {
-        console.error('Error loading tasks:', error);
-        // Don't let task loading errors break the page - just show empty list
+    const result = await apiRequest('../Tasks/get_tasks.php', {
+        method: 'GET'
+    });
+    
+    if (result.success && result.data.success && result.data.tasks) {
+        tasks = result.data.tasks.map(task => ({
+            id: task.id.toString(),
+            text: task.text,
+            completed: task.completed
+        }));
+        renderTasks();
+    } else {
+        // If no tasks, just render empty list
         renderTasks();
     }
 }
@@ -828,75 +768,32 @@ async function saveSessionToDatabase() {
         completed_tasks: tasks.filter(t => t.completed).map(t => t.text)
     };
     
-    console.log('Attempting to save session:', sessionData); // Debug log remove later
+    const result = await apiRequest('../Sessions/create_session.php', {
+        method: 'POST',
+        body: sessionData
+    });
     
-    try {
-        const url = `../Sessions/create_session.php`;
-
-        console.log('Fetching URL:', url); // Debug log, remove later
+    if (result.success && result.data.success) {
+        // Store session ID for use in Feynman notes
+        currentSessionId = result.data.session_id.toString();
         
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify(sessionData)
-        });
-
-        console.log('Response status:', response.status, response.statusText); // Debug log
+        // Also store in localStorage for Feynman notes compatibility (temporary)
+        const sessionForNotes = {
+            sessionId: currentSessionId,
+            date: sessionData.session_date,
+            duration: sessionData.duration,
+            tasks: sessionData.tasks,
+            completedTasks: sessionData.completed_tasks
+        };
+        localStorage.setItem('currentSession', JSON.stringify(sessionForNotes));
         
-        if (!response.ok) {
-            // Try to get error message from response
-            let errorMessage = `HTTP error! status: ${response.status}`;
-            try {
-                const errorData = await response.json();
-                errorMessage = errorData.error || errorData.message || errorMessage;
-            } catch (e) {
-                // If response isn't JSON, get as text
-                const textResponse = await response.text();
-                errorMessage = textResponse.substring(0, 200) || errorMessage;
-            }
-            throw new Error(errorMessage);
-        }
-
-        const data = await response.json();
+        // Show modal asking if they want to continue or proceed to Feynman notes
+        showSessionCompleteModal();
+    } else {
+        const errorMsg = result.error || result.data?.error || 'Unknown error';
+        const dbError = result.data?.db_error ? ` Database error: ${result.data.db_error}` : '';
+        SwalAlert.error('Failed to Save Session', `${errorMsg}${dbError}`);
         
-        console.log('Session save response:', data); // Debug log
-        
-        if (data.success) {
-
-            // Store session ID for use in Feynman notes
-            currentSessionId = data.session_id.toString();
-            
-            // Also store in localStorage for Feynman notes compatibility (temporary)
-            const sessionForNotes = {
-                sessionId: currentSessionId,
-                date: sessionData.session_date,
-                duration: sessionData.duration,
-                tasks: sessionData.tasks,
-                completedTasks: sessionData.completed_tasks
-            };
-            localStorage.setItem('currentSession', JSON.stringify(sessionForNotes));
-            
-            console.log('Session saved successfully:', currentSessionId); // Debug log
-            
-            // Show modal asking if they want to continue or proceed to Feynman notes
-            showSessionCompleteModal();
-
-        } else {
-            console.error('Failed to save session:', data);
-            const errorMsg = data.error || 'Unknown error';
-            const dbError = data.db_error ? ` Database error: ${data.db_error}` : '';
-            alert(`Failed to save session: ${errorMsg}${dbError}`);
-
-            // Still show modal even if save failed
-            showSessionCompleteModal();
-        }
-    } catch (error) {
-        console.error('Error saving session:', error);
-        alert(`Error saving session: ${error.message}. Please check your connection and the browser console.`);
         // Still show modal even if save failed
         showSessionCompleteModal();
     }
@@ -943,6 +840,7 @@ resetTimer = function() {
     currentSessionId = null;
     originalResetTimer();
 };
+
 
 
 

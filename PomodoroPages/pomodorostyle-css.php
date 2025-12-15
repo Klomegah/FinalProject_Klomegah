@@ -26,8 +26,10 @@
 }
 
 body {
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     background-color: var(--bg-off-white);
     font-family: 'Poppins', sans-serif;
     display: flex;
@@ -126,14 +128,14 @@ body {
     flex: 1;
     gap: 2rem;
     padding: 2rem;
-    max-width: 1200px; /* Reduced from 1400px for better centering */
+    max-width: 1200px;
     margin: 0 auto;
     width: 100%;
-    overflow: hidden;
+    overflow: auto;
     align-items: stretch;
-    justify-content: center; /* Center the content */
-    height: calc(100vh - 70px);
-    max-height: calc(100vh - 70px);
+    justify-content: center;
+    min-height: calc(100vh - 70px);
+    transition: all 0.3s ease;
 }
 
 /* Responsive: Stack vertically on smaller screens */
@@ -141,10 +143,10 @@ body {
     .main-wrapper {
         flex-direction: column;
         align-items: center;
-        height: auto;
-        min-height: calc(100vh - 70px);
         padding: 1.5rem;
         gap: 1.5rem;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
     
     .timer-section {
@@ -158,11 +160,32 @@ body {
         max-width: 600px;
         flex: 0 0 auto;
         min-height: 400px;
+        height: auto;
+        max-height: 500px;
     }
     
     .timer-wrapper {
-        width: 300px;
-        height: 300px;
+        width: clamp(280px, 40vw, 320px);
+        height: clamp(280px, 40vw, 320px);
+    }
+}
+
+/* Medium screens - adjust layout proportions */
+@media (max-width: 1200px) and (min-width: 1025px) {
+    .main-wrapper {
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+    
+    .timer-wrapper {
+        width: clamp(300px, 25vw, 350px);
+        height: clamp(300px, 25vw, 350px);
+    }
+    
+    .tasks-section {
+        width: clamp(320px, 28vw, 380px);
+        min-width: 320px;
+        max-width: 380px;
     }
 }
 
@@ -172,53 +195,71 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 2rem;
     padding: 2rem;
-    
+    min-width: 0;
+    transition: all 0.3s ease;
+    align-self: stretch; /* Match tasks section height */
+    min-height: 400px; /* Match tasks section min-height */
 }
 
 
-/* Mode Selector */
+/* Mode Selector - Matching Analytics Filter Buttons */
 .mode-selector {
     display: flex;
     gap: 1rem;
     justify-content: center;
     width: 100%;
+    flex-shrink: 0; /* Don't shrink, similar to tasks-header */
+    flex-wrap: wrap;
+    padding: 0 1rem;
 }
 
 .mode-btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    background: transparent;
-    color: var(--text-color);
-    font-size: 1rem;
+    padding: 1rem 2rem;
+    border: 2px solid var(--text-dark);
+    border-radius: 15px;
+    background: var(--base-color);
+    color: var(--text-dark);
     font-weight: 600;
+    font-size: 1rem;
     cursor: pointer;
-    border-radius: 8px;
     transition: all 0.3s ease;
     font-family: 'Poppins', sans-serif;
+    min-width: 120px;
+}
+
+.mode-btn:hover {
+    background: var(--input-color);
+    border-color: var(--primary-purple);
+    color: var(--primary-purple);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(134, 114, 255, 0.3);
 }
 
 .mode-btn.active {
-    background-color: var(--accent-color);
-    color: var(--base-color);
-}
-
-.mode-btn:hover:not(.active) {
-    background-color: rgba(134, 114, 255, 0.1);
-    color: var(--accent-color);
+    background: var(--primary-purple);
+    border-color: var(--primary-purple);
+    color: white;
+    box-shadow: 0 4px 12px rgba(134, 114, 255, 0.4);
 }
 
 /* Circular Timer Wrapper */
 .timer-wrapper {
     position: relative;
-    width: 350px; /* Slightly larger for better visibility */
-    height: 350px;
+    width: clamp(250px, 30vw, 350px);
+    height: clamp(250px, 30vw, 350px);
+    min-width: 250px;
+    min-height: 250px;
+    max-width: 350px;
+    max-height: 350px;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0; /* Prevent shrinking */
+    flex-shrink: 0;
+    flex: 1; /* Take available space, similar to tasks-list */
+    min-height: 0;
 }
 
 .timer-circle {
@@ -231,7 +272,7 @@ body {
     justify-content: center;
 }
 
-/* Progress Ring (Outer Ring ) */
+/* Progress Ring  */
 .timer-progress-ring {
     position: absolute;
     inset: 0;
@@ -246,7 +287,7 @@ body {
         var(--border-light) 360deg
     );
 
-    /* Create outer ring */
+    /* outer progress ring */
     mask: radial-gradient(
         circle,
         transparent calc(50% - 5px),
@@ -286,6 +327,7 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     width: 100%;
+    margin-top: auto; /* Push button to bottom to align with tasks section add-task-box */
 }
 
 #start-btn {
@@ -319,7 +361,9 @@ body {
 /* TASKS SECTION (RIGHT) */
 
 .tasks-section {
-    width: 350px;
+    width: clamp(300px, 30vw, 400px);
+    min-width: 300px;
+    max-width: 400px;
     background: var(--base-color);
     border: 2px solid var(--input-color);
     border-radius: 2em;
@@ -328,10 +372,11 @@ body {
     flex-direction: column;
     gap: 1rem;
     color: var(--text-color);
-    height: 100%;
-    max-height: 100%;
+    min-height: 400px;
+    max-height: calc(100vh - 150px);
     overflow: hidden;
     flex-shrink: 0;
+    transition: all 0.3s ease;
 }
 
 .tasks-title {
@@ -339,6 +384,8 @@ body {
     font-weight: 700;
     text-align: center;
     margin-bottom: 1rem;
+    padding-top: 0;
+    margin-top: 0;
 }
 
 .tasks-list {
@@ -464,41 +511,30 @@ body {
         padding-top: 70px;
     }
 
-    .app-nav-container {
-        padding: 0 var(--spacing-sm);
-    }
-
     .main-wrapper {
         flex-direction: column;
         padding: 1rem;
         gap: 1.5rem;
-        height: auto;
         min-height: calc(100vh - 70px);
-        overflow: visible;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .timer-section {
         width: 100%;
-        min-height: auto;
-    }
-
-    .container {
         max-width: 100%;
-        padding: 2em 2em;
-        gap: 20px;
-        min-height: 400px;
-        width: 100%;
+        padding: 1.5rem;
+        gap: 1.5rem;
     }
     
     .tasks-section {
         width: 100%;
-        max-width: 600px;
+        max-width: 100%;
+        min-width: 100%;
         margin: 0 auto;
-        flex-shrink: 1;
         min-height: 350px;
-        max-height: none;
-        height: auto;
-        overflow: visible;
+        max-height: 500px;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
     }
@@ -510,7 +546,7 @@ body {
     .tasks-list {
         flex: 1;
         min-height: 200px;
-        max-height: 400px;
+        max-height: 350px;
         overflow-y: auto;
     }
 
@@ -538,57 +574,79 @@ body {
 
     .mode-selector {
         gap: 0.75rem;
+        flex-wrap: wrap;
+        justify-content: center;
     }
 
     .mode-btn {
         padding: 0.6rem 1.2rem;
         font-size: 0.95rem;
     }
+
+    .timer-wrapper {
+        width: clamp(250px, 50vw, 300px);
+        height: clamp(250px, 50vw, 300px);
+    }
 }
 
 
+@media (max-width: 768px) {
+    .main-wrapper {
+        padding: 1rem;
+        gap: 1.25rem;
+    }
+
+    .timer-section {
+        padding: 1rem;
+        gap: 1.25rem;
+    }
+
+    .timer-wrapper {
+        width: clamp(220px, 60vw, 280px);
+        height: clamp(220px, 60vw, 280px);
+    }
+
+    .tasks-section {
+        padding: 1.25em;
+        min-height: 300px;
+        max-height: 450px;
+    }
+
+    .tasks-list {
+        min-height: 150px;
+        max-height: 300px;
+    }
+}
+
 @media (max-width: 480px) {
     body {
-        min-height: 100vh;
-        height: auto;
-        overflow-y: auto;
-        overflow-x: hidden;
         padding-top: 70px;
     }
 
     .main-wrapper {
         padding: 0.75rem;
         gap: 1rem;
-        height: auto;
-        min-height: calc(100vh - 70px);
     }
 
     .timer-section {
-        padding: 1rem;
+        padding: 0.75rem;
         gap: 1rem;
     }
 
     .tasks-section {
         padding: 1em;
-        min-height: 300px;
-        max-height: none;
-        height: auto;
-        overflow: visible;
-        display: flex;
-        flex-direction: column;
+        min-height: 280px;
+        max-height: 400px;
+        border-radius: 1.5em;
     }
 
     .tasks-list {
-        flex: 1;
-        min-height: 150px;
-        max-height: 300px;
-        overflow-y: auto;
+        min-height: 120px;
+        max-height: 250px;
     }
 
     .add-task-box {
-        flex-shrink: 0;
-        margin-top: 1rem;
-        width: 100%;
+        margin-top: 0.75rem;
     }
 
     #task-input {
@@ -625,14 +683,16 @@ body {
         font-size: 0.85rem;
     }
 
-    /* Responsive Circular Timer */
     .timer-wrapper {
-        width: 250px;
-        height: 250px;
-        margin: 1rem 0;
+        width: clamp(200px, 70vw, 250px);
+        height: clamp(200px, 70vw, 250px);
     }
 
     .timer-text {
-        font-size: clamp(2rem, 8vw, 2.5rem);
+        font-size: clamp(1.75rem, 10vw, 2.5rem);
+    }
+
+    .tasks-title {
+        font-size: 1.25rem;
     }
 }
