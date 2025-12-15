@@ -24,7 +24,7 @@ TestResults.xml
 
 #Ignore environment files
 *.env
-
 env/
 
+#ignore system files
 desktop.ini
