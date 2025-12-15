@@ -26,3 +26,5 @@ TestResults.xml
 *.env
 
 env/
+
+desktop.ini
