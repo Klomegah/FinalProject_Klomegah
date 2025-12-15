@@ -119,13 +119,14 @@ I took a **research-driven, learning-focused approach** to development:
 - **AI Assistance:** ~10% - Code organization, error handling
 - **Files:** `LoginAndSignUpPages/loginandsignup.js`, `LoginAndSignUpPages/login-html.php`, `LoginAndSignUpPages/signup-html.php`
 
-#### 8. **Feynman Notes** (25% AI, 75% Me)
-- **My Contribution:** 75%
+#### 8. **Feynman Notes** (40% AI, 60% Me)
+- **My Contribution:** 60%
 - **Process:**
   - Used YouTube div style as reference
   - Imported and integrated all components independently
   - Designed the three-step reflection interface
-- **AI Assistance:** ~25% - Code structure, auto-save implementation
+  - Later extended the page with optional voice input (Web Speech API) so users can dictate notes when they are tired or do not feel like typing, then refine the text for better reinforcement
+- **AI Assistance:** ~40% - Code structure, auto-save implementation, and embedding the browser's speech recognition API so it fits cleanly into my existing utilities and Feynman workflow
 - **Files:** `FeynmanPages/feynmannotes-html.php`, `FeynmanPages/feynmannotes.js`
 
 #### 9. **Backend CRUD Operations** (50% AI, 50% Me)
@@ -259,12 +260,37 @@ I took a **research-driven, learning-focused approach** to development:
 
 ---
 
+### Example 5: Voice Input Feature - Learning-Driven Integration
+**Date:** 15/12/2025
+**Prompt:** "based on these videos how do i add voice feature to the app"
+
+**Process:**
+1. I watched YouTube tutorials on Web Speech API to understand the concept
+2. Found a suitable SVG microphone icon myself
+3. Asked AI: "based on these videos how do i add voice feature to the app"
+4. AI helped integrate the Web Speech API seamlessly into my existing Feynman Notes workflow
+5. **I styled the microphone button myself** to match the app's design
+6. I tested and refined the implementation, adding visual feedback and auto-stop functionality
+
+**My Modifications:**
+- Selected and integrated the SVG microphone icon
+- Styled the voice button to match the app's aesthetic
+- Added visual feedback (button state changes) for listening status
+- Implemented 1-minute auto-stop feature
+- Integrated error handling for browser compatibility and HTTPS requirements
+
+**Extent of Use:** 50% AI (API integration guidance), 50% Me (styling, visual feedback, testing, refinement)
+
+---
+
 ## Learning Resources Used
 
 ### YouTube Tutorials
 - **Pomodoro Timer Implementation:** https://youtu.be/sVSAklXy1uE?si=QSeVsr6NTxthUa6o
 - **Login/Signup Pages:** https://youtu.be/bVl5_UdcAy0?si=j7mVIzepHiI-kmtR
 - **Feynman Notes Div Style (Same video on Login. I also watched a couple of videos on this channel):** https://youtu.be/bVl5_UdcAy0?si=j7mVIzepHiI-kmtR
+- **Web Speech API / Voice Input Concept (1):** https://youtu.be/4eIRrowvLRk?si=hIyKFH3VDGvFAILg
+- **Web Speech API / Voice Input Concept (2):** https://youtu.be/3OnMBtOyGkY?si=Gcnjy1p31C8PULrY
 
 ### Lab Exercises & Team Projects
 - **Register/Login PHP:** Borrowed concepts and code from class lab
@@ -425,7 +451,7 @@ The use of AI was a learning tool that helped me understand implementation patte
 | Pomodoro Timer | 85% | 15% | YouTube | Core logic independent |
 | Styling & UI | 50% | 50% | Reference images | Heavily customized (analytics, profile, modal, history) |
 | Login/Signup Pages | 90% | 10% | YouTube + Lab + Team Project | Borrowed code, I built team interface, so I just repurposed some parts|
-| Feynman Notes | 75% | 25% | YouTube | Imported independently |
+| Feynman Notes | 60% | 40% | YouTube (layout + Web Speech API concept) | Three-step notes + optional voice input integration |
 | Backend CRUD | 50% | 50% | Research | Described needs, understood code |
 | JavaScript (Most) | 30% | 70% | Research | Described needs, understood code |
 | JavaScript (Exceptions) | 90% | 10% | YouTube + Lab + Team | Login/signup & Pomodoro |

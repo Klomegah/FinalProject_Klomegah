@@ -21,6 +21,7 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
   3. Key Concepts - Extract 3 main ideas 
 - **Auto-save drafts** every 30 seconds (never lose your work)
 - **Linked to sessions** - Reflect on each completed Pomodoro
+- **Optional voice input for notes** - Click the mic icon to dictate when you're tired or don't feel like typing, then refine the text to reinforce learning
 
 ###  Analytics & Reports
 - **Visual charts** showing your study progress
@@ -88,9 +89,9 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 
 ### 3. **Reflect with Feynman Notes**
    - After completing a session, you'll be redirected to Feynman notes
-   - Write your initial explanation
-   - Simplify it in your own words
-   - Extract key concepts
+   - Write your initial explanation (or click the mic icon to speak and let the app transcribe for you)
+   - Simplify it in your own words, editing the text to make it clearer
+   - Extract key concepts to reinforce what you just explained
    - Click "Save" to store your reflection
 
 ### 4. **Track Your Progress**
