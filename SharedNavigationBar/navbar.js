@@ -1,7 +1,7 @@
-// SHARED NAVBAR COMPONENT WITH USER DROPDOWN
-// This file should be included in pages that need the user dropdow
+// SHARED NAVIGATION BAR - Appears on all authenticated pages
+// This file creates the user dropdown menu with profile, analytics, history, and logout links
 
-// Load user info and create dropdown
+// Fetch user profile data and create the dropdown menu
 async function initializeNavbar() {
     const navActions = document.getElementById('nav-actions');
     if (!navActions) {
@@ -9,34 +9,33 @@ async function initializeNavbar() {
         return;
     }
 
-    try {
-        // Fetch user profile
-        const response = await fetch(`../User/get_profile.php`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin'
-        });
-
-        const data = await response.json();
-        
-        if (data.success && data.user) {
-            createUserDropdown(navActions, data.user);
-        } else {
-
-            createFallbackNav(navActions);
-        }
-    } catch (error) {
-        createFallbackNav(navActions);
+    const result = await apiRequest(`../User/get_profile.php`, {
+        method: 'GET'
+    });
+    
+    // If we successfully got user data, create dropdown with real user info
+    if (result.success && result.data.success && result.data.user) {
+        createUserDropdown(navActions, result.data.user);
+    } else {
+        // If loading user data failed, still show the dropdown with placeholder values
+        // This ensures the navbar always works, even if there's a temporary API issue
+        const defaultUser = {
+            firstname: 'User',
+            lastname: '',
+            email: 'user@example.com'
+        };
+        createUserDropdown(navActions, defaultUser);
+        console.warn('Failed to load user profile, using default values');
     }
 }
 
-// Create user dropdown menu (always shown on all pages)
+// Build the HTML for the user dropdown menu and add it to the page
 function createUserDropdown(container, user) {
+    // Get the first letter of the user's name for the avatar circle
     const firstLetter = user.firstname ? user.firstname.charAt(0).toUpperCase() : 'U';
+    // Combine first and last name, or use email if no name
     const fullName = `${user.firstname} ${user.lastname}`.trim() || user.email;
+    // Truncate name if it's too long to fit in the navbar
     const displayName = fullName.length > 20 ? fullName.substring(0, 17) + '...' : fullName;
 
     // Create a wrapper div for nav actions
@@ -106,18 +105,19 @@ function createUserDropdown(container, user) {
         </div>
     `;
 
-    // Add event listeners
+    // Set up click handlers for the dropdown menu
     const menuBtn = document.getElementById('user-menu-btn');
     const dropdownMenu = document.getElementById('user-dropdown-menu');
     const logoutLink = document.getElementById('logout-link');
 
+    // When user clicks the user menu button, show/hide the dropdown
     if (menuBtn && dropdownMenu) {
         menuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('show');
+            e.stopPropagation(); // Prevent the click from bubbling up
+            dropdownMenu.classList.toggle('show'); // Toggle the 'show' class to show/hide menu
         });
 
-        // Close dropdown when clicking outside
+        // Close the dropdown if user clicks anywhere outside of it
         document.addEventListener('click', (e) => {
             if (!navWrapper.contains(e.target)) {
                 dropdownMenu.classList.remove('show');
@@ -125,16 +125,18 @@ function createUserDropdown(container, user) {
         });
     }
 
-    // Logout confirmation and redirect
+    // Handle logout button click - ask for confirmation first
     if (logoutLink) {
         logoutLink.addEventListener('click', async (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Prevent the link from navigating immediately
             
-            if (!confirm('Are you sure you want to log out?')) {
-                return;
+            // Ask user to confirm they want to log out
+            const confirmResult = await SwalAlert.confirm('Log Out', 'Are you sure you want to log out?');
+            if (!confirmResult.isConfirmed) {
+                return; // If they clicked "Cancel", don't do anything
             }
 
-            // Make AJAX logout request
+            // Send a request to the server to destroy the session
             try {
                 await fetch(logoutLink.href, {
                     method: 'GET',
@@ -144,11 +146,11 @@ function createUserDropdown(container, user) {
                     credentials: 'same-origin'
                 });
 
-                // Redirect to login page
+                // After logout, redirect to the login page
                 window.location.href = '../LoginAndSignUpPages/login-html.php';
             } catch (error) {
                 console.error('Logout error:', error);
-                // Redirect to login page anyway
+                // Even if there's an error, still redirect to login page
                 window.location.href = '../LoginAndSignUpPages/login-html.php';
             }
         });
@@ -156,50 +158,16 @@ function createUserDropdown(container, user) {
 
 }
 
-// Fallback navigation if user info fails to load
-function createFallbackNav(container) {
-    container.innerHTML = `
-        <a href="../Authentication/logout.php" class="logout-btn" id="logout-link-fallback">Log Out</a>
-    `;
-
-    const logoutLink = document.getElementById('logout-link-fallback');
-    if (logoutLink) {
-        logoutLink.addEventListener('click', async (e) => {
-            e.preventDefault();
-            
-            if (!confirm('Are you sure you want to log out?')) {
-                return;
-            }
-
-            // Make AJAX logout request
-            try {
-                await fetch(logoutLink.href, {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    credentials: 'same-origin'
-                });
-
-                // Redirect to login page
-                window.location.href = '../LoginAndSignUpPages/login-html.php';
-            } catch (error) {
-                console.error('Logout error:', error);
-                // Redirect to login page anyway
-                window.location.href = '../LoginAndSignUpPages/login-html.php';
-            }
-        });
-    }
-}
-
-// Update navbar user info (for use after profile update)
+// Function to refresh the navbar (useful after updating profile - name might have changed)
 window.updateNavbarUserInfo = function() {
     initializeNavbar();
 };
 
-// Initialize on page load
+// Start building the navbar as soon as the page is ready
 if (document.readyState === 'loading') {
+    // If page is still loading, wait for it to finish
     document.addEventListener('DOMContentLoaded', initializeNavbar);
 } else {
+    // If page is already loaded, initialize immediately
     initializeNavbar();
 }
