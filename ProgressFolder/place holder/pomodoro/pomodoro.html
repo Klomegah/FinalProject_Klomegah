@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A beautiful Pomodoro timer to help you focus and be productive">
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="pomodorostyle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-wrapper">
+        <!-- Left Side: Timer Section -->
+        <div class="timer-section">
+            <div class="container">
+                <h1 class="title">Pomodoro Timer</h1>
+                <hr>
+                <p class="timer" id="timer">25:00</p>
+                <div class="button-wrapper">
+                    <button id="start-btn">Start</button>
+                    <button id="stop-btn">Stop</button>
+                    <button id="reset-btn">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Tasks Section -->
+        <div class="tasks-section">
+            <div class="tasks-header">
+                <h2 class="tasks-title">Tasks</h2>
+            </div>
+            <div class="tasks-list" id="tasks-list">
+                <!-- Tasks will be added here dynamically -->
+            </div>
+            <div class="add-task-box" id="add-task-box">
+                <input type="text" id="task-input" placeholder="+ Add here the task you will focus on" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom: Music Player -->
+    <footer class="music-player">
+        <div class="music-controls">
+            <div class="music-controls-left">
+                <button class="music-btn" id="menu-btn">☰</button>
+            </div>
+            <div class="music-controls-center">
+                <button class="music-btn" id="prev-btn">⏮</button>
+                <button class="music-btn play-btn" id="play-btn">▶</button>
+                <button class="music-btn" id="next-btn">⏭</button>
+            </div>
+            <div class="music-controls-right">
+                <div class="volume-control">
+                    <span>🔊</span>
+                    <input type="range" class="volume-slider" min="0" max="100" value="50" id="volume-slider">
+                </div>
+                <div class="music-info">
+                    <span id="music-title">Background music - Lofi 4</span>
+                </div>
+                <button class="music-btn" id="fullscreen-btn">⛶</button>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../account/account-dropdown.js"></script>
+    <script src="pomodoro.js"></script>
+</body>
+</html>
