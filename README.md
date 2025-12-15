@@ -124,7 +124,6 @@ All API endpoints follow RESTful conventions:
 - `PUT` - Update existing resource
 - `DELETE` - Remove resource
 
-
 ---
 
 
@@ -132,21 +131,28 @@ All API endpoints follow RESTful conventions:
 
 **Stephanie Klenam Klomegah**
 
-Final Project - LockIn Application
-
 ---
 
-## Acknowledgments
+## Acknowledgments & References
 
-- **Pomodoro Technique** - Francesco Cirillo
-- **Feynman Technique** - Richard Feynman
+- **Pomodoro Technique Concept** - Francesco Cirillo
+- **Feynman Technique Concept** - Richard Feynman
 - **Chart.js** - Data visualization library
 - **SweetAlert2** - Beautiful alert library
 - **Poppins Font** - Google Fonts
 
 ---
 
+## AI Assistance Disclosure
 - **[AI_USAGE_DISCLOSURE.md](./AI_USAGE_DISCLOSURE.md)** - AI assistance disclosure
+
+---
+
+
+---
+## Extra Documentation Folders
+
+`ExtraDocumentation`-  This folder contains some screeshots of progress and sub-folders of initial iterations and planning materials (screenshots of other Pomodoro websites I wanted to emulate, particulary the styling) in `ProgressFolder` and  `DesignInspiration` respectively.
 
 ---
 
@@ -156,6 +162,8 @@ Final Project - LockIn Application
 - Account activation uses frontend popup (email activation planned)
 - Timer settings are fixed (customizable durations planned)
 - No background music feature (planned for future)
+- Analytics data cannot be exported (planned for future)
+- Database not optimized for large datasets and scalability (currently sufficient for small user base)
 
 ### Planned Features
 - Email-based account activation
