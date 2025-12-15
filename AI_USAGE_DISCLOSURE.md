@@ -9,7 +9,7 @@ This project was developed through a combination of independent research, learni
 ## AI Tools Used
 
 ### Primary Tool
-- **Tool Name:** Cursor AI (Auto/Cursor IDE Assistant)
+- **Tool Name:** Cursor AI 
 - **Provider:** Cursor
 - **Model/Version:** Auto (Agent Router)
 - **Primary Use Period:** Throughout incremental development
@@ -201,11 +201,13 @@ I took a **research-driven, learning-focused approach** to development:
 ### Example 1: Account Activation - Problem Solving Initiative
 **Date:** 13/12/2025
 **Prompt:** "How do I do account activation?"
+
 **AI Suggestion:** Email-based activation using PHPMailer
+
 **My Response:**
 - Spent an entire day researching and implenting PHPMailer, I have all the files downloaded
 - Found it too complex as the errors were too complex to handle
-- **I independently thought of a frontend popup solution and Cursor helped me figure this out**
+- **I independently thought of a frontend popup solution, and Cursor helped me figure this out**
 - Implemented token-based activation via popup modal
 - This demonstrates significant problem-solving and initiative
 
@@ -246,6 +248,7 @@ I took a **research-driven, learning-focused approach** to development:
 **Date:** 14/12/2025
 **Prompt:** "Remove redundant code, create shared utilities for common elements."
 **AI Output:** Created `apiRequest()` helper and `SwalAlert` wrapper
+
 **My Modifications:**
 - Integrated across 10+ files manually
 - Borrowed SweetAlert concepts from team project (learned from Wendy)
