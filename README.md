@@ -49,7 +49,7 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 - **MySQL** - Database
 ### Frontend
 - **HTML5** - Structure
-- **CSS3** - Styling (responsive design)
+- **CSS** - Styling 
 - **JavaScript** - Client-side logic
 - **Chart.js** - Data visualization
 - **SweetAlert2** - Enhanced alerts and confirmations
