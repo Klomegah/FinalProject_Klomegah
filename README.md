@@ -47,8 +47,6 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 ### Backend
 - **PHP** - Server-side logic
 - **MySQL** - Database
-
-
 ### Frontend
 - **HTML5** - Structure
 - **CSS3** - Styling (responsive design)
@@ -102,7 +100,7 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 
 ---
 
-## Design Philosophy
+## Design 
 
 - **Clean and minimal** - Focus on productivity, not distractions
 - **Purple and white theme** - Professional and calming
@@ -111,7 +109,7 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 
 ---
 
-## 🔧 Development
+##  Development
 
 ### File Naming Conventions
 - `*-html.php` - HTML structure files
@@ -126,17 +124,11 @@ All API endpoints follow RESTful conventions:
 - `PUT` - Update existing resource
 - `DELETE` - Remove resource
 
-### Adding New Features
-1. Create a new folder for the feature
-2. Add HTML, CSS, and JavaScript files
-3. Create API endpoints in separate folder
-4. Follow existing patterns for consistency
 
 ---
 
 
-
-## 👤 Author
+##  Author
 
 **Stephanie Klenam Klomegah**
 
@@ -172,8 +164,4 @@ Final Project - LockIn Application
 - Export analytics data
 - Mobile app version
 
----
-
-**Last Updated:** 2025  
-**Version:** 1.0.0  
 
