@@ -215,6 +215,7 @@ I took a **research-driven, learning-focused approach** to development:
 
 ### Example 2: Styling - Design-Driven Development
 **Date:** N/A - Throughout development. To see the progress, view folder `ProgressFolder`
+
 **Process:**
 1. I collected screenshots from 4 different Pomodoro apps
 2. Created folder with reference images
@@ -228,7 +229,8 @@ I took a **research-driven, learning-focused approach** to development:
 ---
 
 ### Example 3: Backend CRUD - Description-to-Code
-**Date:** N/A- Throughout development
+**Date:** N/A- Throughout development, view progression in  `ProgressFolder`
+
 **Process:**
 1. I described needed functionality (e.g., "Create endpoint to save tasks")
 2. Cursor generated PHP code
