@@ -460,6 +460,7 @@ I, Stephanie Klenam Klomegah, declare that:
 - This disclosure accurately represents the extent of AI usage and my contributions
 
 **Date:** 15/12/2025
+
 **Project:** LockIn - Final Project
 
 ---
