@@ -3,7 +3,7 @@
 A productivity web application that combines Pomodoro-style focus timers with Feynman-inspired reflection techniques to help you study more effectively.
 
 
-##  LockIn Live And Hosted on school server
+##  LockIn Live And Hosted on School Server
 Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 
 ## Features
