@@ -149,10 +149,9 @@ All API endpoints follow RESTful conventions:
 ---
 
 
----
 ## Extra Documentation Folders
 
-`ExtraDocumentation`-  This folder contains some screeshots of progress and sub-folders of initial iterations and planning materials (screenshots of other Pomodoro websites I wanted to emulate, particulary the styling) in `ProgressFolder` and  `DesignInspiration` respectively.
+ This folder `ExtraDocumentation` contains some screenshots of progress and sub-folders of initial iterations and planning materials (screenshots of other Pomodoro websites I wanted to emulate, particularly the styling) in `ProgressFolder` and `DesignInspiration` respectively.
 
 ---
 
