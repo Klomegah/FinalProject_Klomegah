@@ -1,3 +1,6 @@
+// LOGIN AND SIGNUP PAGE - Handles both login and registration forms
+
+// Get references to all the form elements we'll need
 const form = document.getElementById("form");
 const firstname_input = document.getElementById("firstname-input");
 const lastname_input = document.getElementById("lastname-input");
@@ -7,7 +10,7 @@ const confirm_password_input = document.getElementById("confirm-password-input")
 const error_message = document.getElementById("error-message");
 const success_message = document.getElementById("success-message");
 
-// Check for URL parameters (activation messages)
+// When page loads, check if user is coming from account activation
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const message = urlParams.get('message');
@@ -30,19 +33,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+// Handle form submission for both login and signup
 form.addEventListener('submit', async (e) => {
-    e.preventDefault(); // Always prevent default to handle with JavaScript
+    e.preventDefault(); // Stop the form from submitting normally - we'll use AJAX instead
 
     let errors = [];
+    // Check if we're on the signup page (signup has firstname input, login doesn't)
     if (firstname_input){
-        //if we have a first name input, we are on the sign up page
+        // We're on the signup page - validate all signup fields
         errors = getSignUpErrors(firstname_input.value,
                                  lastname_input.value, 
                                  email_input.value, 
                                  password_input.value,
                                   confirm_password_input.value);
 
-        // If validation passes, submit via AJAX
+        // If all fields are valid, send registration request to server
         if (errors.length === 0) {
             try {
                 const response = await fetch('../Authentication/register.php', {
@@ -61,8 +66,9 @@ form.addEventListener('submit', async (e) => {
                 const data = await response.json();
                 console.log('Registration response:', data);
 
+                // If registration was successful, show the activation popup
                 if (data.success) {
-                    // Show activation popup modal
+                    // Get references to the activation modal elements
                     const modal = document.getElementById('activation-modal');
                     const activateBtn = document.getElementById('activate-account-btn');
                     const statusMsg = document.getElementById('activation-status');
@@ -70,15 +76,16 @@ form.addEventListener('submit', async (e) => {
                     
                     console.log('Modal elements:', {modal: !!modal, activateBtn: !!activateBtn, token: !!data.activation_token});
                     
+                    // If we have all the elements we need, show the activation modal
                     if (modal && activateBtn && data.activation_token) {
-                        // Hide wrapper (form is inside), show modal
+                        // Hide the signup form and show the activation modal
                         if (wrapper) wrapper.style.display = 'none';
                         
-                        // Store token for activation
+                        // Store the activation token on the button so we can use it later
                         activateBtn.setAttribute('data-token', data.activation_token);
                         modal.style.display = 'flex';
                         
-                        // Handle activation button click
+                        // When user clicks "Activate Account" button, activate their account
                         activateBtn.onclick = async function() {
                             const token = this.getAttribute('data-token');
                             if (!token) {
@@ -154,10 +161,10 @@ form.addEventListener('submit', async (e) => {
             }, 5000);
         }
     } else {
-        //else we are on the login page
+        // We're on the login page - validate email and password
         errors = getLoginErrors(email_input.value, password_input.value);
         
-        // If validation passes, submit login via AJAX
+        // If validation passes, send login request to server
         if (errors.length === 0) {
             try {
                 const response = await fetch('../Authentication/login.php', {
@@ -173,15 +180,16 @@ form.addEventListener('submit', async (e) => {
 
                 const data = await response.json();
 
+                // If login was successful, redirect to the Pomodoro timer page
                 if (data.success) {
-                    // Redirect to Pomodoro page
                     window.location.href = '../PomodoroPages/pomodoro-html.php';
                 } else {
-                    // Show error message
+                    // If login failed, show an error message
                     error_message.style.color = 'red';
                     error_message.innerText = data.error || 'Login failed. Please try again.';
                     error_message.style.display = 'block';
                     
+                    // Hide the error message after 5 seconds
                     setTimeout(() => {
                         error_message.style.display = 'none';
                         error_message.innerText = '';
@@ -208,9 +216,11 @@ form.addEventListener('submit', async (e) => {
 
 
 
+// Validate all the signup form fields and return any errors found
 function getSignUpErrors(firstname, lastname, email, password, confirm_password){
     let errors = [];
-    //validate first name
+    
+    // Check first name - must exist and be at least 2 characters
     if (!firstname || firstname.trim() == ''){
         errors.push("First name is required");
         firstname_input.parentElement.classList.add('incorrect');
@@ -219,7 +229,7 @@ function getSignUpErrors(firstname, lastname, email, password, confirm_password)
         firstname_input.parentElement.classList.add('incorrect');
     }
 
-    //validate last name
+    // Check last name - must exist and be at least 2 characters
     if (!lastname || lastname.trim() == ''){
         errors.push("Last name is required");
         lastname_input.parentElement.classList.add('incorrect');
@@ -228,11 +238,12 @@ function getSignUpErrors(firstname, lastname, email, password, confirm_password)
         lastname_input.parentElement.classList.add('incorrect');
     }
 
-    //validate email
+    // Check email - must exist and be in valid email format
     if (!email || email.trim() == ''){
         errors.push("Email is required");
         email_input.parentElement.classList.add('incorrect');
     }else {
+         // Use regex pattern to check if email looks valid (has @ and domain)
          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
             errors.push("Please enter a valid email address");
@@ -241,7 +252,7 @@ function getSignUpErrors(firstname, lastname, email, password, confirm_password)
     }
     
 
-    //validate password
+    // Check password - must exist and be at least 8 characters
     if (!password || password.trim() == ''){
         errors.push("Password is required");
         password_input.parentElement.classList.add('incorrect');
@@ -250,7 +261,7 @@ function getSignUpErrors(firstname, lastname, email, password, confirm_password)
         password_input.parentElement.classList.add('incorrect');
     }
 
-    //validate confirm password
+    // Check confirm password - must match the password field
     if (!confirm_password || confirm_password == ''){
         errors.push("Confirm password is required");
         confirm_password_input.parentElement.classList.add('incorrect');
@@ -261,14 +272,16 @@ function getSignUpErrors(firstname, lastname, email, password, confirm_password)
     return errors;
 }
 
+// Validate the login form fields and return any errors found
 function getLoginErrors(email, password){
     let errors = [];
     
-       //validate email
+    // Check email - must exist and be in valid format
     if (!email || email.trim() == ''){
         errors.push("Email is required");
         email_input.parentElement.classList.add('incorrect');
     }else {
+         // Use regex to check if email format is valid
          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
             errors.push("Please enter a valid email address");
@@ -276,7 +289,7 @@ function getLoginErrors(email, password){
         }
     }
 
-    //validate password
+    // Check password - must exist and be at least 8 characters
     if (!password || password.trim() == ''){
         errors.push("Password is required");
         password_input.parentElement.classList.add('incorrect');
@@ -288,10 +301,13 @@ function getLoginErrors(email, password){
     return errors;
 }
 
+// Remove error styling when user starts typing in any input field
+// This gives immediate feedback that they're fixing the error
 const allInputs = [firstname_input, lastname_input, email_input, password_input, confirm_password_input].filter(input => input !== null);
 
 allInputs.forEach(input => {
     if (input){
+        // When user types in a field, remove the red error styling
         input.addEventListener('input', () => {
             if (input.parentElement.classList.contains('incorrect')){
                 input.parentElement.classList.remove('incorrect');
@@ -302,5 +318,6 @@ allInputs.forEach(input => {
     }
 
 });
+
 
 
