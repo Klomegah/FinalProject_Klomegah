@@ -165,20 +165,6 @@ form div.incorrect input {
     border-color: #f06272;
 } 
 
-#error-message {
-  
-    display: none;
-    color: #f06272;
-    margin-bottom: 20px;
-    background-color: #f0ebff;
-    width: 100%; /* Takes 100% of form width */
-    border: 3px solid  #f06272;
-    border-radius: 12px;
-    padding: 15px 20px;
-    line-height: 1.6;
-    box-sizing: border-box;
-}
-
 /* Activation Modal Styles */
 #activation-modal {
     display: none;
@@ -236,12 +222,6 @@ form div.incorrect input {
 #activate-account-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-}
-
-#activation-status {
-    margin-top: 15px;
-    font-size: 14px;
-    min-height: 20px;
 }
  
 

@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Signup Page</title>
     <link rel="stylesheet" href="loginandsignup-css.php">
-    
+    <link rel="stylesheet" href="../SharedUtilities/utils-css.php">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <!-- Activation Popup Modal -->
@@ -15,13 +17,11 @@
             <p>Your account has been created successfully!</p>
             <p>Click the button below to activate your account and continue to login.</p>
             <button id="activate-account-btn">Activate Account</button>
-            <p id="activation-status"></p>
         </div>
     </div>
 
     <div class = "wrapper">
         <h1>Signup</h1>
-        <p id ="error-message"></p>
 
         <form id = "form" novalidate>  
             <div>
@@ -68,7 +68,8 @@
     </div>
     
 
-<script src="loginandsignup.js" defer></script>
+    <script src="../SharedUtilities/utils.js"></script>
+    <script src="loginandsignup.js" defer></script>
    
 </body>
 </html>

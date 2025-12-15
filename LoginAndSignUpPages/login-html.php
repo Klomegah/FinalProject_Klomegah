@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login Page</title>
     <link rel="stylesheet" href="loginandsignup-css.php">
-   
+    <link rel="stylesheet" href="../SharedUtilities/utils-css.php">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
    
     <div class = "wrapper">
         <h1>Login</h1>
-        <p id="success-message" style="display: none; color: green; margin-bottom: 1rem; padding: 0.5rem; background: #d4edda; border-radius: 5px;"></p>
-        <form id = "form" novalidate>  
-             <p id ="error-message"></p>
+        <form id = "form" novalidate>
            
             <div>
                 <label for = "email-input">
@@ -40,7 +40,8 @@
 
 
 
- <script  src="loginandsignup.js" defer></script>
+    <script src="../SharedUtilities/utils.js"></script>
+    <script src="loginandsignup.js" defer></script>
 
 
 </body>

@@ -7,28 +7,20 @@ const lastname_input = document.getElementById("lastname-input");
 const email_input = document.getElementById("email-input");
 const password_input = document.getElementById("password-input");
 const confirm_password_input = document.getElementById("confirm-password-input");
-const error_message = document.getElementById("error-message");
-const success_message = document.getElementById("success-message");
 
 // When page loads, check if user is coming from account activation
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const message = urlParams.get('message');
     
+    // Show success message using SweetAlert2 if user just activated account
     if (message === 'activated') {
-        if (success_message) {
-            success_message.textContent = 'Account activated successfully! You can now log in.';
-            success_message.style.display = 'block';
-
-            // Remove message from URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
+        SwalAlert.success('Account Activated', 'Account activated successfully! You can now log in.');
+        // Remove message from URL
+        window.history.replaceState({}, document.title, window.location.pathname);
     } else if (message === 'already_activated') {
-        if (success_message) {
-            success_message.textContent = 'Account is already activated. You can log in.';
-            success_message.style.display = 'block';
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
+        SwalAlert.info('Already Activated', 'Account is already activated. You can log in.');
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
 });
 
@@ -71,7 +63,6 @@ form.addEventListener('submit', async (e) => {
                     // Get references to the activation modal elements
                     const modal = document.getElementById('activation-modal');
                     const activateBtn = document.getElementById('activate-account-btn');
-                    const statusMsg = document.getElementById('activation-status');
                     const wrapper = document.querySelector('.wrapper');
                     
                     console.log('Modal elements:', {modal: !!modal, activateBtn: !!activateBtn, token: !!data.activation_token});
@@ -89,14 +80,12 @@ form.addEventListener('submit', async (e) => {
                         activateBtn.onclick = async function() {
                             const token = this.getAttribute('data-token');
                             if (!token) {
-                                statusMsg.style.color = 'red';
-                                statusMsg.textContent = 'No activation token found. Please register again.';
+                                SwalAlert.error('Activation Error', 'No activation token found. Please register again.');
                                 return;
                             }
                             
                             this.disabled = true;
                             this.textContent = 'Activating...';
-                            statusMsg.textContent = '';
                             
                             try {
                                 const activateResponse = await fetch('../Authentication/activate.php', {
@@ -111,20 +100,19 @@ form.addEventListener('submit', async (e) => {
                                 const activateData = await activateResponse.json();
                                 
                                 if (activateData.success) {
-                                    statusMsg.style.color = 'green';
-                                    statusMsg.textContent = activateData.message || 'Account activated! Redirecting...';
-                                    setTimeout(() => {
+                                    // Show success message and redirect
+                                    SwalAlert.success('Account Activated', activateData.message || 'Account activated! Redirecting to login...').then(() => {
                                         window.location.href = 'login-html.php?message=activated';
-                                    }, 1500);
+                                    });
                                 } else {
-                                    statusMsg.style.color = 'red';
-                                    statusMsg.textContent = activateData.error || 'Activation failed. Please try again.';
+                                    // Show error message and re-enable button
+                                    SwalAlert.error('Activation Failed', activateData.error || 'Activation failed. Please try again.');
                                     this.disabled = false;
                                     this.textContent = 'Activate Account';
                                 }
                             } catch (error) {
-                                statusMsg.style.color = 'red';
-                                statusMsg.textContent = 'Network error. Please try again.';
+                                // Show network error and re-enable button
+                                SwalAlert.error('Network Error', 'Network error. Please try again.');
                                 this.disabled = false;
                                 this.textContent = 'Activate Account';
                             }
@@ -133,32 +121,16 @@ form.addEventListener('submit', async (e) => {
                     } 
                     
                 } else {
-                    // Show error message
-                    error_message.style.color = 'red';
-                    error_message.innerText = data.error || 'Registration failed. Please try again.';
-                    error_message.style.display = 'block';
-                    
-                    setTimeout(() => {
-                        error_message.style.display = 'none';
-                        error_message.innerText = '';
-                    }, 5000);
+                    // Show error message using SweetAlert2
+                    SwalAlert.error('Registration Failed', data.error || 'Registration failed. Please try again.');
                 }
             } catch (error) {
-                error_message.style.color = 'red';
-                error_message.innerText = 'Network error. Please try again.';
-                error_message.style.display = 'block';
+                // Show network error using SweetAlert2
+                SwalAlert.error('Network Error', 'Network error. Please try again.');
             }
         } else {
-            // Validation errors
-            error_message.style.color = 'red';
-            error_message.innerText = errors.join('. ');
-            error_message.style.display = 'block';
-
-            //Auto-hide error message after 5 seconds
-            setTimeout(() => {
-                error_message.style.display = 'none';
-                error_message.innerText = '';
-            }, 5000);
+            // Show validation errors using SweetAlert2
+            SwalAlert.error('Validation Error', errors.join('. '));
         }
     } else {
         // We're on the login page - validate email and password
@@ -184,32 +156,16 @@ form.addEventListener('submit', async (e) => {
                 if (data.success) {
                     window.location.href = '../PomodoroPages/pomodoro-html.php';
                 } else {
-                    // If login failed, show an error message
-                    error_message.style.color = 'red';
-                    error_message.innerText = data.error || 'Login failed. Please try again.';
-                    error_message.style.display = 'block';
-                    
-                    // Hide the error message after 5 seconds
-                    setTimeout(() => {
-                        error_message.style.display = 'none';
-                        error_message.innerText = '';
-                    }, 5000);
+                    // If login failed, show error message using SweetAlert2
+                    SwalAlert.error('Login Failed', data.error || 'Login failed. Please try again.');
                 }
             } catch (error) {
-                error_message.style.color = 'red';
-                error_message.innerText = 'Network error. Please try again.';
-                error_message.style.display = 'block';
+                // Show network error using SweetAlert2
+                SwalAlert.error('Network Error', 'Network error. Please try again.');
             }
         } else {
-            // Validation errors
-            error_message.style.color = 'red';
-            error_message.innerText = errors.join('. ');
-            error_message.style.display = 'block';
-
-            setTimeout(() => {
-                error_message.style.display = 'none';
-                error_message.innerText = '';
-            }, 5000);
+            // Show validation errors using SweetAlert2
+            SwalAlert.error('Validation Error', errors.join('. '));
         }
     }
 });
@@ -311,12 +267,9 @@ allInputs.forEach(input => {
         input.addEventListener('input', () => {
             if (input.parentElement.classList.contains('incorrect')){
                 input.parentElement.classList.remove('incorrect');
-                error_message.innerText = '';
             }
-        }
-        );
+        });
     }
-
 });
 
 
