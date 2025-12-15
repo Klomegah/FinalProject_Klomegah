@@ -3,13 +3,13 @@
 A productivity web application that combines Pomodoro-style focus timers with Feynman-inspired reflection techniques to help you study more effectively.
 
 
-##  LockIn Live And Hosted on school server
+##  LockIn Live And Hosted on School Server
 Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 
 ## Features
 
 ###  Pomodoro Timer
-- **25-minute focus sessions** with customizable break periods
+- **25-minute focus sessions** with break periods
 - **Task management** integrated with timer
 - **Session tracking** to monitor your productivity
 - **Multiple modes:** Pomodoro, Short Break (5min), Long Break (15min)
@@ -49,7 +49,7 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 - **MySQL** - Database
 ### Frontend
 - **HTML5** - Structure
-- **CSS3** - Styling (responsive design)
+- **CSS** - Styling 
 - **JavaScript** - Client-side logic
 - **Chart.js** - Data visualization
 - **SweetAlert2** - Enhanced alerts and confirmations

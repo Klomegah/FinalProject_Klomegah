@@ -1,15 +1,15 @@
-# AI Usage Disclosure - LockIn Project
+# AI Usage Disclosure - LockIn
 
 ## Overview
 
-This project was developed through a combination of independent research, learning from educational resources (YouTube tutorials, lab exercises, team project), and incremental AI assistance. I took significant initiative in planning, designing, and problem-solving throughout the development process. This document provides transparency about all assistance received.
+This project was developed through a combination of independent research, learning from educational resources (YouTube tutorials, lab exercises, and team projects), and incremental AI assistance. I took significant initiative in planning, designing, and problem-solving throughout the development process. This document provides transparency regarding all assistance received, along with all necessary links to relevant learning resources.
 
 ---
 
 ## AI Tools Used
 
 ### Primary Tool
-- **Tool Name:** Cursor AI (Auto/Cursor IDE Assistant)
+- **Tool Name:** Cursor AI 
 - **Provider:** Cursor
 - **Model/Version:** Auto (Agent Router)
 - **Primary Use Period:** Throughout incremental development
@@ -22,7 +22,7 @@ This project was developed through a combination of independent research, learni
 
 I took a **research-driven, learning-focused approach** to development:
 
-1. **Planning Phase:** Created detailed sketches and visual designs in notebook before coding
+1. **Planning Phase:** Created detailed sketches and visual designs in a notebook before coding
 2. **Learning Resources:** Studied YouTube tutorials for Pomodoro timer implementation and login/signup patterns
 3. **Reference Materials:** Collected screenshots from 4 different Pomodoro apps for design inspiration
 4. **Problem-Solving:** When AI suggested complex solutions (e.g., PHPMailer), I researched alternatives and developed simpler solutions
@@ -42,7 +42,7 @@ I took a **research-driven, learning-focused approach** to development:
 #### 1. **Project Planning & Architecture** (0% AI, 100% Me)
 - **My Contribution:** 100%
 - **Process:** 
-  - Created detailed sketches in notebook
+  - Created detailed sketches in my notebook
   - Planned folder structure after learning MVC in class
   - Designed database schema independently
   - Organized all folders and files
@@ -51,7 +51,7 @@ I took a **research-driven, learning-focused approach** to development:
 #### 1. **Project Planning & Architecture** (0% AI, 100% Me)
 - **My Contribution:** 100%
 - **Process:** 
-  - Created detailed sketches in notebook
+  - Created detailed sketches in my notebook
   - Planned folder structure after learning MVC in class
   - Designed database schema independently
   - Organized all folders and files
@@ -101,10 +101,10 @@ I took a **research-driven, learning-focused approach** to development:
 #### 6. **Styling & UI Design** (50% AI, 50% Me)
 - **My Contribution:** 50%
 - **Process:**
-  - Created folder with screenshots from 4 different Pomodoro apps
-  - Showed images to Cursor asking "how do I achieve this?"
+  - Created a folder with screenshots from 4 different Pomodoro apps `DesignInspiration`
+  - Showed images to Cursor, asking, "How do I achieve this?"
   - **Heavily tweaked all AI-generated CSS** to match my exact vision
-  - Adjusted colors, spacing, layouts based on personal preferences
+  - Adjusted colors, spacing, and layouts based on personal preferences
   - Made responsive design improvements
 - **AI Assistance:** ~50% - Generated initial CSS based on reference images for the analytics, profile and modal pages, history session
 - **My Modifications:** Significant customization of all styling
@@ -149,7 +149,7 @@ I took a **research-driven, learning-focused approach** to development:
 - **My Contribution:** 30%
 - **Process:**
   - Described desired functionality to Cursor
-  - Cursor generated JavaScript code
+  - Cursor-generated JavaScript code
   - I researched and understood all code
   - Tested and modified as needed
 - **AI Assistance:** ~70% - Generated JS based on my descriptions
@@ -201,11 +201,13 @@ I took a **research-driven, learning-focused approach** to development:
 ### Example 1: Account Activation - Problem Solving Initiative
 **Date:** 13/12/2025
 **Prompt:** "How do I do account activation?"
+
 **AI Suggestion:** Email-based activation using PHPMailer
+
 **My Response:**
 - Spent an entire day researching and implenting PHPMailer, I have all the files downloaded
 - Found it too complex as the errors were too complex to handle
-- **I independently thought of a frontend popup solution and Cursor helped me figure this out**
+- **I independently thought of a frontend popup solution, and Cursor helped me figure this out**
 - Implemented token-based activation via popup modal
 - This demonstrates significant problem-solving and initiative
 
@@ -214,21 +216,23 @@ I took a **research-driven, learning-focused approach** to development:
 ---
 
 ### Example 2: Styling - Design-Driven Development
-**Date:** N/A - Throughout development
+**Date:** N/A - Throughout development. To see the progress, view folder `ProgressFolder`
+
 **Process:**
 1. I collected screenshots from 4 different Pomodoro apps
 2. Created folder with reference images
 3. Showed images to Cursor: "How do I achieve this?"
 4. Cursor generated initial CSS
 5. **I heavily tweaked all styling** to match my exact vision and taste
-6. Adjusted colors, spacing, layouts, responsive breakpoints
+6. Adjusted colors, spacing, layouts, and responsive breakpoints
 
-**Extent of Use:** 50% AI (initial generation ), 50% Me (significant customization)
+**Extent of Use:** 50% Me (initial generation ), 50% Ai (significant customization)
 
 ---
 
 ### Example 3: Backend CRUD - Description-to-Code
-**Date:** N/A- Throughout development
+**Date:** N/A- Throughout development, view progression in  `ProgressFolder`
+
 **Process:**
 1. I described needed functionality (e.g., "Create endpoint to save tasks")
 2. Cursor generated PHP code
@@ -242,12 +246,13 @@ I took a **research-driven, learning-focused approach** to development:
 
 ### Example 4: Shared Utilities - Code Reuse Initiative
 **Date:** 14/12/2025
-**Prompt:** "Remove redundant code, create shared utilities for common elements"
+**Prompt:** "Remove redundant code, create shared utilities for common elements."
 **AI Output:** Created `apiRequest()` helper and `SwalAlert` wrapper
+
 **My Modifications:**
 - Integrated across 10+ files manually
 - Borrowed SweetAlert concepts from team project (learned from Wendy)
-- Customized colors to match brand
+- Customized colors to match the brand
 - Tested all integrations
 
 **Extent of Use:** 50% AI (utility creation), 50% Me (integration, customization)
@@ -264,14 +269,16 @@ I took a **research-driven, learning-focused approach** to development:
 ### Lab Exercises & Team Projects
 - **Register/Login PHP:** Borrowed concepts and code from class lab
 - **SweetAlert:** Borrowed code concepts from team project (learned from Wendy)
-- **Team Project Interface:** I built the interface for the team project, which I later adapted for this project so it would be similar styling and feel
+- **Team Project Interface:** I built the interface for the team project, which I later adapted for this project so it would have a similar styling and feel.
+- **Link To Team Project:** http://169.239.251.102:341/~wendy.dwumfuor/CodeX//Code-X-Sprint-3/
+
 
 ### Design References
-- **Pomodoro App Screenshots:** Folder with screenshots of different app designs 
+- **Pomodoro App Screenshots:** Folder with screenshots of different app designs `DesignInspiration`
 - **Visual Planning:** Sketches in notebook (attached in write-up)
 
 ### Project Progression Documentation
-- **Initial Codebase:** Folder containing project progression over weeks, showing incremental development (to be uploaded as zip folder)
+- **Initial Codebase:** Folder containing project progression over weeks, showing incremental development (to be uploaded as a zip folder)
 - **Purpose:** Demonstrates the evolution of the project and my learning process over time
 
 ---
@@ -288,7 +295,7 @@ I took a **research-driven, learning-focused approach** to development:
 
 ### Changes Made to AI Outputs
 - **Styling:** Heavily tweaked all CSS to match my exact design vision
-- **Account Activation:** Developed simpler frontend solution instead of PHPMailer
+- **Account Activation:** Developed a simpler frontend solution instead of PHPMailer
 - **Code Integration:** Manually integrated all utilities across codebase
 - **Error Handling:** Enhanced based on testing
 - **Responsive Design:** Adjusted breakpoints and layouts
@@ -304,12 +311,12 @@ I took a **research-driven, learning-focused approach** to development:
 
 
 ### Design References
-- **Screenshots:** 4 different Pomodoro app designs (shared with AI for styling reference)
-- **Purpose:** To help AI understand desired visual style
+- **Screenshots:** 4+ different Pomodoro app designs (shared with AI for styling reference)
+- **Purpose:** To help Cursor understand the desired visual style
 
 ### Sensitive Data
 - **Database Credentials:** Never shared (stored in `env/connect.env`, not in code)
-- **User Data:** Never shared, user fake filler for account set ups.
+- **User Data:** Never shared, user fake filler for account set-ups.
 
 ---
 
@@ -417,7 +424,7 @@ The use of AI was a learning tool that helped me understand implementation patte
 | Account Activation | 70% | 30% | Research (PHPMailer) | I developed final solution |
 | Pomodoro Timer | 85% | 15% | YouTube | Core logic independent |
 | Styling & UI | 50% | 50% | Reference images | Heavily customized (analytics, profile, modal, history) |
-| Login/Signup Pages | 90% | 10% | YouTube + Lab + Team Project | Borrowed code, I built team interface |
+| Login/Signup Pages | 90% | 10% | YouTube + Lab + Team Project | Borrowed code, I built team interface, so I just repurposed some parts|
 | Feynman Notes | 75% | 25% | YouTube | Imported independently |
 | Backend CRUD | 50% | 50% | Research | Described needs, understood code |
 | JavaScript (Most) | 30% | 70% | Research | Described needs, understood code |
@@ -435,10 +442,10 @@ The use of AI was a learning tool that helped me understand implementation patte
 1. **Planning:** I created detailed sketches and planned the entire architecture
 2. **Learning:** I studied YouTube tutorials, lab exercises, and team projects for foundational knowledge
 3. **Design Research:** I collected and analyzed 4 different app designs for inspiration
-4. **Problem-Solving:** I developed an alternative solution for account activation when AI suggestion was too complex
+4. **Problem-Solving:** I developed an alternative solution for account activation when the AI suggestion, i.e PHPMailer was too complex
 5. **Code Understanding:** I researched and understood all AI-generated code, building on class concepts
-6. **Customization:** I heavily modified all AI suggestions to match my exact requirements
-7. **Testing:** I independently tested all functionality to ensure backend works correctly
+6. **Customization:** I heavily modified all AI suggestions to match my exact requirements and taste
+7. **Testing:** I independently tested all functionality to ensure the backend works correctly
 8. **Organization:** I solely organized all folders and files based on MVC learning from class
 9. **Project Progression:** I maintained an initial codebase folder showing progression over weeks
 
@@ -457,7 +464,8 @@ I, Stephanie Klenam Klomegah, declare that:
 - I have maintained documentation of project progression over time (initial codebase folder)
 - This disclosure accurately represents the extent of AI usage and my contributions
 
-**Date:** [Date]
+**Date:** 15/12/2025
+
 **Project:** LockIn - Final Project
 
 ---
