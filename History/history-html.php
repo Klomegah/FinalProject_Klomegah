@@ -6,7 +6,9 @@
     <title>Session History - LockIn</title>
     <link rel="stylesheet" href="historycss.php">
     <link rel="stylesheet" href="../SharedNavigationBar/navbar-css.php">
-
+    <link rel="stylesheet" href="../SharedUtilities/utils-css.php">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -58,7 +60,8 @@
     
 
 
-    <script src="history.js"></script>
+    <script src="../SharedUtilities/utils.js"></script>
     <script src="../SharedNavigationBar/navbar.js"></script>
+    <script src="history.js"></script>
 </body>
 </html>
