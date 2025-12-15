@@ -1,135 +1,115 @@
-// FEYNMAN NOTES - SESSION TRACKING
+// FEYNMAN NOTES PAGE - Reflection notes for completed Pomodoro sessions
 
+// Store the current session data and ID
 let currentSession = null;
 let sessionId = null;
 
-// Get session ID from localStorage (set by timer) or URL parameter
+// Get the session ID from either the URL (if coming from History page) 
+// or from localStorage (if coming directly from timer)
 const urlParams = new URLSearchParams(window.location.search);
 const sessionIdFromUrl = urlParams.get('session_id');
 const sessionFromStorage = JSON.parse(localStorage.getItem('currentSession') || '{}');
 
+// Use URL parameter if available, otherwise use the one from localStorage
 sessionId = sessionIdFromUrl || sessionFromStorage.sessionId;
 
-// Load session data and notes
+// Set up the page when it first loads - fetch session info and any existing notes
 async function initializePage() {
+    // If no session ID, show a warning and hide the session info section
     if (!sessionId) {
         document.getElementById('session-info').style.display = 'none';
-        alert('No session found. Please complete a Pomodoro session first.');
+        SwalAlert.warning('No Session Found', 'Please complete a Pomodoro session first.');
         return;
     }
 
-    try {
-        // Load session info from database
-        const sessionResponse = await fetch(`../Sessions/get_session.php?session_id=${sessionId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin'
-        });
-
-        const sessionData = await sessionResponse.json();
+    // Fetch the session details from the database
+    const sessionResult = await apiRequest(`../Sessions/get_session.php?session_id=${sessionId}`, {
+        method: 'GET'
+    });
+    
+    // If we got the session data, display it on the page
+    if (sessionResult.success && sessionResult.data.success && sessionResult.data.session) {
+        currentSession = sessionResult.data.session;
         
-        if (sessionData.success && sessionData.session) {
-            currentSession = sessionData.session;
-            
-            // Display session info
-            const sessionDate = new Date(currentSession.session_date);
-            document.getElementById('session-date').textContent = sessionDate.toLocaleString();
-            document.getElementById('session-duration').textContent = Math.floor(currentSession.duration / 60);
-        } else {
-            document.getElementById('session-info').style.display = 'none';
-            console.error('Failed to load session:', sessionData.error || 'Unknown error');
-        }
-    } catch (error) {
-        console.error('Error loading session:', error);
+        // Show when the session happened and how long it was
+        const sessionDate = new Date(currentSession.session_date);
+        document.getElementById('session-date').textContent = sessionDate.toLocaleString();
+        document.getElementById('session-duration').textContent = Math.floor(currentSession.duration / 60);
+    } else {
+        // If we couldn't load the session, hide the info section
         document.getElementById('session-info').style.display = 'none';
+        console.error('Failed to load session:', sessionResult.error || 'Unknown error');
     }
 
-    // Load notes and drafts
+    // Load any saved notes and auto-saved drafts
     await loadNotes();
     await loadDraft();
 }
 
-// Load existing notes from database
+// Load any previously saved notes from the database and fill in the text areas
 async function loadNotes() {
     if (!sessionId) return;
 
-    try {
-        const response = await fetch(`../Notes/get_notes.php?session_id=${sessionId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin'
-        });
-
-        const data = await response.json();
-        
-        if (data.success && data.notes) {
-            document.getElementById('initial-explanation').value = data.notes.initial_explanation || '';
-            document.getElementById('simplified-explanation').value = data.notes.simplified_explanation || '';
-            document.getElementById('key-concepts').value = data.notes.key_concepts || '';
-        }
-    } catch (error) {
-        console.error('Error loading notes:', error);
+    // Fetch the notes for this session
+    const result = await apiRequest(`../Notes/get_notes.php?session_id=${sessionId}`, {
+        method: 'GET'
+    });
+    
+    // If notes exist, populate the three text areas with the saved content
+    if (result.success && result.data.success && result.data.notes) {
+        document.getElementById('initial-explanation').value = result.data.notes.initial_explanation || '';
+        document.getElementById('simplified-explanation').value = result.data.notes.simplified_explanation || '';
+        document.getElementById('key-concepts').value = result.data.notes.key_concepts || '';
     }
 }
 
-// Load draft from database
+// Load any auto-saved drafts (unsaved work) from the database
 async function loadDraft() {
     if (!sessionId) return;
 
-    try {
-        const response = await fetch(`../Drafts/get_draft.php?session_id=${sessionId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin'
-        });
+    // Fetch the draft for this session
+    const result = await apiRequest(`../Drafts/get_draft.php?session_id=${sessionId}`, {
+        method: 'GET'
+    });
+    
+    // Only load draft if the text areas are empty - we don't want to overwrite saved notes
+    // This way, if you have saved notes, they take priority over drafts
+    if (result.success && result.data.success && result.data.draft) {
+        const initialEl = document.getElementById('initial-explanation');
+        const simplifiedEl = document.getElementById('simplified-explanation');
+        const conceptsEl = document.getElementById('key-concepts');
 
-        const data = await response.json();
-        
-        // Only load draft if notes fields are empty (don't overwrite saved notes)
-        if (data.success && data.draft) {
-            const initialEl = document.getElementById('initial-explanation');
-            const simplifiedEl = document.getElementById('simplified-explanation');
-            const conceptsEl = document.getElementById('key-concepts');
-
-            if (!initialEl.value && data.draft.initialExplanation) {
-                initialEl.value = data.draft.initialExplanation;
-            }
-            if (!simplifiedEl.value && data.draft.simplifiedExplanation) {
-                simplifiedEl.value = data.draft.simplifiedExplanation;
-            }
-            if (!conceptsEl.value && data.draft.keyConcepts) {
-                conceptsEl.value = data.draft.keyConcepts;
-            }
+        // Fill in each field only if it's currently empty
+        if (!initialEl.value && result.data.draft.initialExplanation) {
+            initialEl.value = result.data.draft.initialExplanation;
         }
-    } catch (error) {
-        console.error('Error loading draft:', error);
+        if (!simplifiedEl.value && result.data.draft.simplifiedExplanation) {
+            simplifiedEl.value = result.data.draft.simplifiedExplanation;
+        }
+        if (!conceptsEl.value && result.data.draft.keyConcepts) {
+            conceptsEl.value = result.data.draft.keyConcepts;
+        }
     }
 }
 
-// Initialize page on load
+// Start loading the page as soon as the script runs
 initializePage();
 
-// Save notes function
+// Save the notes to the database when user clicks the Save button
 async function saveNotes() {
+    // Make sure we have a session ID before trying to save
     if (!sessionId) {
-        alert('No session found. Please complete a Pomodoro session first.');
+        SwalAlert.warning('No Session Found', 'Please complete a Pomodoro session first.');
         return;
     }
 
+    // Disable the button and show "Saving..." so user knows something is happening
     const btn = document.getElementById('save-btn');
     const originalText = btn.textContent;
     btn.disabled = true;
     btn.textContent = 'Saving...';
 
+    // Collect all the text from the three text areas
     const notesData = {
         session_id: parseInt(sessionId),
         initial_explanation: document.getElementById('initial-explanation').value.trim(),
@@ -137,97 +117,77 @@ async function saveNotes() {
         key_concepts: document.getElementById('key-concepts').value.trim()
     };
 
-    console.log('Saving notes data:', notesData); // Debug log
-
-    try {
-        const response = await fetch(`../Notes/save_notes.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify(notesData)
-        });
-
-        console.log('Response status:', response.status); // Debug log
-        console.log('Response ok:', response.ok); // Debug log
-
-        const data = await response.json();
+    // Send the notes to the server to save them
+    const result = await apiRequest('../Notes/save_notes.php', {
+        method: 'POST',
+        body: notesData
+    });
+    
+    // If save was successful, show success message and offer to go back to timer
+    if (result.success && result.data.success) {
+        // Change button to green "Saved!" for visual feedback
+        btn.textContent = 'Saved!';
+        btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
         
-        console.log('Response data:', data); // Debug log
-        
-        if (data.success) {
-            // Show success message
-            btn.textContent = 'Saved!';
-            btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-            
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.background = '';
-                btn.disabled = false;
-            }, 2000);
-            
-            // Redirect back to timer
-            setTimeout(() => {
-                if (confirm('Notes saved! Return to timer?')) {
-                    window.location.href = '../PomodoroPages/pomodoro-html.php';
-                }
-            }, 2000);
-        } else {
-            console.error('Save failed:', data); // Debug log
-            alert('Failed to save notes: ' + (data.error || 'Unknown error'));
+        // After 2 seconds, reset the button back to normal
+        setTimeout(() => {
             btn.textContent = originalText;
+            btn.style.background = '';
             btn.disabled = false;
-        }
-    } catch (error) {
-        alert('Error saving notes: ' + error.message + '. Check the console for details.');
+        }, 2000);
+        
+        // Ask user if they want to go back to the timer
+        setTimeout(async () => {
+            const confirmResult = await SwalAlert.confirm('Notes Saved!', 'Return to timer?');
+            if (confirmResult.isConfirmed) {
+                window.location.href = '../PomodoroPages/pomodoro-html.php';
+            }
+        }, 2000);
+    } else {
+        // If save failed, show an error message and re-enable the button
+        SwalAlert.error('Failed to Save Notes', result.error || result.data?.error || 'Unknown error');
         btn.textContent = originalText;
         btn.disabled = false;
     }
 }
 
-// Event listener for save button
+// When user clicks the Save button, save the notes
 document.getElementById('save-btn').addEventListener('click', saveNotes);
 
-// Auto-save draft every 30 seconds
+// Auto-save feature - saves drafts every 30 seconds so user doesn't lose work
 let draftInterval = null;
 
 function startAutoSave() {
+    // Clear any existing auto-save interval (in case function is called multiple times)
     if (draftInterval) clearInterval(draftInterval);
     
+    // Set up a timer that runs every 30 seconds
     draftInterval = setInterval(async () => {
+        // Don't save if there's no session ID
         if (!sessionId) return;
 
+        // Collect all the current text from the three text areas
         const draft = {
             initialExplanation: document.getElementById('initial-explanation').value,
             simplifiedExplanation: document.getElementById('simplified-explanation').value,
             keyConcepts: document.getElementById('key-concepts').value
         };
 
-        try {
-            await fetch(`../Drafts/save_draft.php`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify({
-                    session_id: parseInt(sessionId),
-                    draft_data: draft
-                })
-            });
-            // Silently save drafts - no need to show feedback
-        } catch (error) {
-            console.error('Error auto-saving draft:', error);
-            // Don't alert user for draft save failures
-        }
-    }, 30000); // Auto-save every 30 seconds
+        // Save the draft to the database (this happens silently in the background)
+        await apiRequest(`../Drafts/save_draft.php`, {
+            method: 'POST',
+            body: {
+                session_id: parseInt(sessionId),
+                draft_data: draft
+            }
+        });
+        // We don't show any message to the user - it just happens automatically
+    }, 30000); // Run every 30 seconds (30000 milliseconds)
 }
 
-// Start auto-save once page is initialized
+// Start the auto-save feature if we have a session ID
 if (sessionId) {
     startAutoSave();
 }
+
 
