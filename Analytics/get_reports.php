@@ -59,14 +59,6 @@ $stmt->close();
 $avgDuration = $totalSessions > 0 ? round($totalSeconds / $totalSessions) : 0;
 $avgMinutes = floor($avgDuration / 60);
 
-// Get longest session
-$stmt = $con->prepare("SELECT MAX(duration) as longest FROM pomodoro_sessions WHERE user_id = ? AND mode = 'pomodoro'");
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$longestSession = $stmt->get_result()->fetch_assoc()['longest'] ?? 0;
-$longestMinutes = floor($longestSession / 60);
-$stmt->close();
-
 // Get sessions per day (last 7 days)
 $stmt = $con->prepare("SELECT DATE(session_date) as date, COUNT(*) as session_count, SUM(duration) as total_duration FROM pomodoro_sessions WHERE user_id = ? AND mode = 'pomodoro' AND session_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(session_date) ORDER BY date DESC");
 $stmt->bind_param("i", $userId);
@@ -100,23 +92,6 @@ while ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-// Get most productive day of week
-$stmt = $con->prepare("SELECT DAYNAME(session_date) as day_name, DAYOFWEEK(session_date) as day_number, COUNT(*) as session_count, SUM(duration) as total_duration FROM pomodoro_sessions WHERE user_id = ? AND mode = 'pomodoro' GROUP BY DAYNAME(session_date), DAYOFWEEK(session_date) ORDER BY session_count DESC");
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$result = $stmt->get_result();
-$dayStats = [];
-while ($row = $result->fetch_assoc()) {
-    $dayStats[] = [
-        'day_name' => $row['day_name'],
-        'day_number' => $row['day_number'],
-        'session_count' => $row['session_count'],
-        'total_duration' => $row['total_duration'],
-        'total_minutes' => floor($row['total_duration'] / 60)
-    ];
-}
-$stmt->close();
-
 // Get study streak (consecutive days with at least one session)
 // This is simplified - counts distinct days in last 30 days that have sessions
 $stmt = $con->prepare("SELECT COUNT(DISTINCT DATE(session_date)) as distinct_days FROM pomodoro_sessions WHERE user_id = ? AND mode = 'pomodoro' AND session_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)");
@@ -145,11 +120,6 @@ echo json_encode([
             'minutes' => $avgMinutes,
             'formatted' => "{$avgMinutes} minutes"
         ],
-        'longest_session' => [
-            'seconds' => (int)$longestSession,
-            'minutes' => $longestMinutes,
-            'formatted' => "{$longestMinutes} minutes"
-        ],
         'total_notes' => (int)$totalNotes,
         'tasks' => [
             'total' => (int)$totalTasks,
@@ -159,8 +129,8 @@ echo json_encode([
         ],
         'daily_stats' => $dailyStats,
         'monthly_stats' => $monthlyStats,
-        'day_of_week_stats' => $dayStats,
         'study_streak' => (int)$studyStreak
     ]
 ]);
 ?>
+
