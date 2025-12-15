@@ -7,6 +7,9 @@
     <title>Profile - LockIn</title>
     <link rel="stylesheet" href="profilestyle-css.php">
     <link rel="stylesheet" href="../SharedNavigationBar/navbar-css.php">
+    <link rel="stylesheet" href="../SharedUtilities/utils-css.php">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     
@@ -112,9 +115,11 @@
         </div>
     </div>
 
+    <script src="../SharedUtilities/utils.js"></script>
     <script src="../SharedNavigationBar/navbar.js"></script>
     <script src="profile.js"></script>
 </body>
 </html>
+
 
 

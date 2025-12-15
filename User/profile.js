@@ -1,211 +1,186 @@
-// PROFILE MANAGEMENT
+// USER PROFILE PAGE - Manage account settings, change password, delete account
 
 const API_BASE = '..';
 
-// Load user profile on page load
+// Fetch the current user's profile information and fill in the form
 async function loadProfile() {
-    try {
-        const response = await fetch(`${API_BASE}/User/get_profile.php`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin'
-        });
-
-        const data = await response.json();
-        
-        if (data.success && data.user) {
-            document.getElementById('firstname').value = data.user.firstname || '';
-            document.getElementById('lastname').value = data.user.lastname || '';
-            document.getElementById('email').value = data.user.email || '';
-        } else {
-            showStatusMessage('error', 'Failed to load profile. Please refresh the page.');
-        }
-    } catch (error) {
-        console.error('Error loading profile:', error);
-        showStatusMessage('error', 'Error loading profile. Please check your connection.');
+    const result = await apiRequest(`${API_BASE}/User/get_profile.php`, {
+        method: 'GET'
+    });
+    
+    if (result.success && result.data.success && result.data.user) {
+        document.getElementById('firstname').value = result.data.user.firstname || '';
+        document.getElementById('lastname').value = result.data.user.lastname || '';
+        document.getElementById('email').value = result.data.user.email || '';
+    } else {
+        showStatusMessage('error', 'Failed to load profile. Please refresh the page.');
     }
 }
 
-// Update profile
+// Handle when user submits the profile update form (name and email changes)
 document.getElementById('profile-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent the form from submitting normally (we'll use AJAX instead)
     
+    // Disable the button and show "Saving..." while we process the update
     const btn = document.getElementById('save-profile-btn');
     const originalText = btn.textContent;
     btn.disabled = true;
     btn.textContent = 'Saving...';
 
+    // Collect the form data (trim whitespace from all fields)
     const formData = {
         firstname: document.getElementById('firstname').value.trim(),
         lastname: document.getElementById('lastname').value.trim(),
         email: document.getElementById('email').value.trim()
     };
 
-    try {
-        const response = await fetch(`${API_BASE}/User/update_profile.php`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify(formData)
-        });
-
-        const data = await response.json();
-        
-        if (data.success) {
-            showStatusMessage('success', 'Profile updated successfully!');
-            // Update navbar user info if available
-            if (typeof updateNavbarUserInfo === 'function') {
-                updateNavbarUserInfo();
-            }
-        } else {
-            showStatusMessage('error', data.error || 'Failed to update profile');
+    // Send the update request to the server
+    const result = await apiRequest(`${API_BASE}/User/update_profile.php`, {
+        method: 'PUT',
+        body: formData
+    });
+    
+    // If update was successful, show success message and update the navbar
+    if (result.success && result.data.success) {
+        showStatusMessage('success', 'Profile updated successfully!');
+        // Update the user name in the navigation bar to reflect the changes
+        if (typeof updateNavbarUserInfo === 'function') {
+            updateNavbarUserInfo();
         }
-    } catch (error) {
-        console.error('Error updating profile:', error);
-        showStatusMessage('error', 'Error updating profile. Please check your connection.');
-    } finally {
-        btn.disabled = false;
-        btn.textContent = originalText;
+    } else {
+        // If update failed, show an error message
+        showStatusMessage('error', result.error || result.data?.error || 'Failed to update profile');
     }
+    
+    // Re-enable the button and restore original text
+    btn.disabled = false;
+    btn.textContent = originalText;
 });
 
-// Change password
+// Handle when user submits the password change form
 document.getElementById('password-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent normal form submission
     
+    // Get the two password fields
     const newPassword = document.getElementById('new-password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
 
-    // Validate passwords match
+    // Check that both passwords match (user typed the same password twice)
     if (newPassword !== confirmPassword) {
         showPasswordStatusMessage('error', 'New passwords do not match');
-        return;
+        return; // Stop here if they don't match
     }
 
+    // Check that password is at least 6 characters long
     if (newPassword.length < 6) {
         showPasswordStatusMessage('error', 'Password must be at least 6 characters long');
-        return;
+        return; // Stop here if password is too short
     }
 
+    // Disable button and show "Changing..." while processing
     const btn = document.getElementById('change-password-btn');
     const originalText = btn.textContent;
     btn.disabled = true;
     btn.textContent = 'Changing...';
 
+    // Prepare the password data to send
     const formData = {
         password: newPassword
     };
 
-    try {
-        const response = await fetch(`${API_BASE}/User/update_profile.php`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify(formData)
-        });
-
-        const data = await response.json();
-        
-        if (data.success) {
-            showPasswordStatusMessage('success', 'Password changed successfully!');
-            // Clear password fields
-            document.getElementById('password-form').reset();
-        } else {
-            showPasswordStatusMessage('error', data.error || 'Failed to change password');
-        }
-    } catch (error) {
-        console.error('Error changing password:', error);
-        showPasswordStatusMessage('error', 'Error changing password. Please check your connection.');
-    } finally {
-        btn.disabled = false;
-        btn.textContent = originalText;
+    // Send the password update to the server
+    const result = await apiRequest(`${API_BASE}/User/update_profile.php`, {
+        method: 'PUT',
+        body: formData
+    });
+    
+    // If password change was successful, show success and clear the form
+    if (result.success && result.data.success) {
+        showPasswordStatusMessage('success', 'Password changed successfully!');
+        // Clear the password fields for security
+        document.getElementById('password-form').reset();
+    } else {
+        // If it failed, show an error message
+        showPasswordStatusMessage('error', result.error || result.data?.error || 'Failed to change password');
     }
+    
+    // Re-enable the button
+    btn.disabled = false;
+    btn.textContent = originalText;
 });
 
-// Delete account
+// ACCOUNT DELETION - Dangerous operation, so we use a confirmation modal
+
+// When user clicks "Delete Account" button, show the confirmation modal
 document.getElementById('delete-account-btn').addEventListener('click', () => {
     document.getElementById('delete-modal').style.display = 'flex';
 });
 
+// When user clicks "Cancel" in the modal, hide it
 document.getElementById('cancel-delete-btn').addEventListener('click', () => {
     document.getElementById('delete-modal').style.display = 'none';
 });
 
+// When user confirms they want to delete their account
 document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+    // Disable button and show "Deleting..." while processing
     const btn = document.getElementById('confirm-delete-btn');
     const originalText = btn.textContent;
     btn.disabled = true;
     btn.textContent = 'Deleting...';
 
-    try {
-        const response = await fetch(`${API_BASE}/User/delete_account.php`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin'
+    // Send DELETE request to permanently remove the account
+    const result = await apiRequest(`${API_BASE}/User/delete_account.php`, {
+        method: 'DELETE'
+    });
+    
+    // If deletion was successful, show success message and redirect to landing page
+    if (result.success && result.data.success) {
+        SwalAlert.success('Account Deleted', 'Your account has been permanently deleted.').then(() => {
+            window.location.href = '../LandingPages/landing-html.php';
         });
-
-        const data = await response.json();
-        
-        if (data.success) {
-            // Account deleted - redirect to landing page
-            alert('Your account has been permanently deleted.');
-            window.location.href = '../LandingPages/landing.html';
-        } else {
-            alert('Failed to delete account: ' + (data.error || 'Unknown error'));
-            btn.disabled = false;
-            btn.textContent = originalText;
-        }
-    } catch (error) {
-        console.error('Error deleting account:', error);
-        alert('Error deleting account. Please check your connection and try again.');
+    } else {
+        // If deletion failed, show error and re-enable the button
+        SwalAlert.error('Failed to Delete Account', result.error || result.data?.error || 'Unknown error');
         btn.disabled = false;
         btn.textContent = originalText;
     }
 });
 
-// Close modal when clicking outside
+// Close the modal if user clicks outside of it (on the dark overlay)
 document.getElementById('delete-modal').addEventListener('click', (e) => {
     if (e.target.id === 'delete-modal') {
         document.getElementById('delete-modal').style.display = 'none';
     }
 });
 
-// Helper functions
+// HELPER FUNCTIONS - Display success/error messages to the user
+
+// Show a status message for profile updates (success or error)
 function showStatusMessage(type, message) {
     const statusEl = document.getElementById('status-message');
     statusEl.textContent = message;
-    statusEl.className = `status-message ${type}`;
+    statusEl.className = `status-message ${type}`; // Add 'success' or 'error' class for styling
     statusEl.style.display = 'block';
     
-    // Auto-hide after 5 seconds
+    // Automatically hide the message after 5 seconds
     setTimeout(() => {
         statusEl.style.display = 'none';
     }, 5000);
 }
 
+// Show a status message for password changes (success or error)
 function showPasswordStatusMessage(type, message) {
     const statusEl = document.getElementById('password-status-message');
     statusEl.textContent = message;
-    statusEl.className = `status-message ${type}`;
+    statusEl.className = `status-message ${type}`; // Add 'success' or 'error' class for styling
     statusEl.style.display = 'block';
     
-    // Auto-hide after 5 seconds
+    // Automatically hide the message after 5 seconds
     setTimeout(() => {
         statusEl.style.display = 'none';
     }, 5000);
 }
 
-// Load profile when page loads
+// Load the user's profile data when the page first loads
 loadProfile();
