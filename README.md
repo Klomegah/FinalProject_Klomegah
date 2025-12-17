@@ -60,7 +60,6 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 - **RESTful API** design
 - **Session-based authentication**
 - **Feature-based folder organization**
-- **Separation of concerns** (UI vs. API)
 
 ---
 
