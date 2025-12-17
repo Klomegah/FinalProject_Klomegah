@@ -13,7 +13,7 @@ async function initializeNavbar() {
         method: 'GET'
     });
     
-    // If we successfully got user data, create dropdown with real user info
+    // If user data is successfully gotten, create dropdown with real user info
     if (result.success && result.data.success && result.data.user) {
         createUserDropdown(navActions, result.data.user);
     } else {
@@ -33,8 +33,8 @@ async function initializeNavbar() {
 function createUserDropdown(container, user) {
     // Get the first letter of the user's name for the avatar circle
     const firstLetter = user.firstname ? user.firstname.charAt(0).toUpperCase() : 'U';
-    // Combine first and last name, or use email if no name
-    const fullName = `${user.firstname} ${user.lastname}`.trim() || user.email;
+    // Combine first and last name
+    const fullName = `${user.firstname} ${user.lastname}`.trim() ;
     // Truncate name if it's too long to fit in the navbar
     const displayName = fullName.length > 20 ? fullName.substring(0, 17) + '...' : fullName;
 

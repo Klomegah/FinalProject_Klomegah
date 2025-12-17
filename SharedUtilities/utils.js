@@ -150,7 +150,62 @@ async function apiRequest(url, options = {}) {
     }
 }
 
+// Session Keep-Alive Mechanism
+// Prevents PHP session expiration during long-running activities (Pomodoro timer, note-taking)
+let keepAliveInterval = null;
+
+/**
+ * Start session keep-alive - sends periodic requests to refresh PHP session
+ * @param {number} intervalMinutes - How often to refresh (default: 10 minutes)
+ */
+function startSessionKeepAlive(intervalMinutes = 10) {
+    // Clear any existing interval
+    stopSessionKeepAlive();
+    
+    // Convert minutes to milliseconds
+    const intervalMs = intervalMinutes * 60 * 1000;
+    
+    // Send keep-alive request immediately, then periodically
+    sendKeepAlive();
+    
+    keepAliveInterval = setInterval(() => {
+        sendKeepAlive();
+    }, intervalMs);
+}
+
+/**
+ * Stop session keep-alive
+ */
+function stopSessionKeepAlive() {
+    if (keepAliveInterval) {
+        clearInterval(keepAliveInterval);
+        keepAliveInterval = null;
+    }
+}
+
+/**
+ * Send a keep-alive request to refresh the session
+ */
+async function sendKeepAlive() {
+    try {
+        // Silently refresh session - don't show errors to user
+        await fetch('../Authentication/keep_alive.php', {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+    } catch (error) {
+        // Silently fail - session might already be expired or network issue
+        // Don't interrupt user's work with error messages
+        console.debug('Keep-alive request failed (this is usually fine):', error);
+    }
+}
+
 // Make functions globally available
 window.SwalAlert = SwalAlert;
 window.apiRequest = apiRequest;
 window.COLORS = COLORS;
+window.startSessionKeepAlive = startSessionKeepAlive;
+window.stopSessionKeepAlive = stopSessionKeepAlive;

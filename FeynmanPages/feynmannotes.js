@@ -400,5 +400,11 @@ document.addEventListener('DOMContentLoaded', () => {
         conceptsBtn.addEventListener('click', () => startVoiceInputFor(conceptsTextarea, conceptsBtn));
     }
 
+    // Start session keep-alive to prevent expiration during long note-taking sessions
+    // Refreshes session every 10 minutes to prevent "Not authenticated" errors
+    if (typeof startSessionKeepAlive === 'function') {
+        startSessionKeepAlive(10); // Refresh every 10 minutes
+    }
+
 });
 

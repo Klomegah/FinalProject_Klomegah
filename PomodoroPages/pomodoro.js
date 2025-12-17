@@ -751,7 +751,7 @@ async function loadTasks() {
  */
 
 async function saveSessionToDatabase() {
-    // Get current local time (not UTC) to avoid timezone offset issues
+    // Get current local time to avoid timezone offset issues
     const now = new Date();
     const localDateString = now.getFullYear() + '-' +
         String(now.getMonth() + 1).padStart(2, '0') + '-' +
@@ -762,7 +762,6 @@ async function saveSessionToDatabase() {
     
     const sessionData = {
         session_date: localDateString, // Send local time as formatted string
-        duration: timerModes.pomodoro,
         mode: 'pomodoro',
         tasks: tasks.filter(t => !t.completed).map(t => t.text),
         completed_tasks: tasks.filter(t => t.completed).map(t => t.text)
@@ -777,11 +776,10 @@ async function saveSessionToDatabase() {
             // Store session ID for use in Feynman notes
         currentSessionId = result.data.session_id.toString();
             
-            // Also store in localStorage for Feynman notes compatibility (temporary)
+            // Also store in localStorage for Feynman notes compatibility 
             const sessionForNotes = {
                 sessionId: currentSessionId,
                 date: sessionData.session_date,
-                duration: sessionData.duration,
                 tasks: sessionData.tasks,
                 completedTasks: sessionData.completed_tasks
             };
@@ -840,6 +838,12 @@ resetTimer = function() {
     currentSessionId = null;
     originalResetTimer();
 };
+
+// Start session keep-alive to prevent expiration during long Pomodoro sessions
+// Refreshes session every 10 minutes to prevent "Not authenticated" errors
+if (typeof startSessionKeepAlive === 'function') {
+    startSessionKeepAlive(10); // Refresh every 10 minutes
+}
 
 
 
