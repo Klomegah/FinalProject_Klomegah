@@ -146,7 +146,7 @@ All API endpoints follow RESTful conventions:
 ---
 
 ## AI Assistance Disclosure
-- **[AI_USAGE_DISCLOSURE.md](./AI_USAGE_DISCLOSURE.md)** - AI assistance disclosure
+- **[AI_USAGE_DISCLOSURE.md](./AI_USAGE_DISCLOSURE.md)** - Detailed AI assistance disclosure document outlining the use of AI  in the development of this project.
 
 ---
 

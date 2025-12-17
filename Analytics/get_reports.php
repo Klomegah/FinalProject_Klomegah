@@ -93,7 +93,7 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 
 // Get study streak (consecutive days with at least one session)
-// This is simplified - counts distinct days in last 30 days that have sessions
+// This is counts distinct days in last 30 days that have sessions
 $stmt = $con->prepare("SELECT COUNT(DISTINCT DATE(session_date)) as distinct_days FROM pomodoro_sessions WHERE user_id = ? AND mode = 'pomodoro' AND session_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)");
 $stmt->bind_param("i", $userId);
 $stmt->execute();

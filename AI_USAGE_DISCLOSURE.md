@@ -57,13 +57,13 @@ I took a **research-driven, learning-focused approach** to development:
   - Organized all folders and files
 - **AI Assistance:** None - completely original planning
 
-#### 2. **Database Design** (10% AI, 90% Me)
-- **My Contribution:** 90%
+#### 2. **Database Design** (50% AI, 50% Me)
+- **My Contribution:** ~50%
 - **Process:**
   - Wrote initial database schema independently
   - Designed all tables, relationships, and constraints
-  - Did not want to overcomplicate the structure
-- **AI Assistance:** ~10% - Cursor provided some improvements over time (optimization suggestions)
+  - Kept the structure intentionally simple to match the project’s scope.
+- **AI Assistance:** ~50% - Cursor provided improvements over time, especially with how Feynman notes, drafts, tasks, and sessions are stored and linked.
 - **Files:** `Database/LockIn.sql`
 
 #### 3. **Connection & Authentication** (20% AI, 80% Me)
@@ -72,19 +72,20 @@ I took a **research-driven, learning-focused approach** to development:
   - Borrowed concepts from lab exercises for register/login PHP
   - Studied YouTube tutorials for authentication patterns
   - Implemented connection.php independently
+  - Using the knowledge gained, I built the authentication system using the activation token flow as was demonstrated in the last class where I got my Ashesi App Server App deleted and I had to go through the process of account creation again.
   - Understood and modified all code
 - **AI Assistance:** ~20% - Code review, syntax help, error handling patterns
 - **Files:** `Connection/connection.php`, `Authentication/login.php`, `Authentication/register.php`
 
-#### 4. **Account Activation System** (30% AI, 70% Me)
-- **My Contribution:** 70%
+#### 4. **Account Activation System** (40% AI, 60% Me)
+- **My Contribution:** 60%
 - **Process:**
   - Asked Cursor how to do account activation
   - Cursor suggested email-based activation (PHPMailer)
   - **I spent an entire day researching PHPMailer** - found it too complex as the errors were too complex to handle
   - **I independently developed a frontend popup solution** (current implementation)
   - This demonstrates significant problem-solving initiative
-- **AI Assistance:** ~30% - Initial suggestion, but I developed the final solution
+- **AI Assistance:** ~40% - Initial suggestion, but I thought of and researched the final solution
 - **Files:** `Authentication/activate.php`, `Authentication/register.php`
 - **Future Improvement:** I plan to explore email activation later
 
@@ -122,22 +123,22 @@ I took a **research-driven, learning-focused approach** to development:
 #### 8. **Feynman Notes** (40% AI, 60% Me)
 - **My Contribution:** 60%
 - **Process:**
-  - Used YouTube div style as reference
+  - Used YouTube div style in the form as reference
   - Imported and integrated all components independently
   - Designed the three-step reflection interface
   - Later extended the page with optional voice input (Web Speech API) so users can dictate notes when they are tired or do not feel like typing, then refine the text for better reinforcement
 - **AI Assistance:** ~40% - Code structure, auto-save implementation, and embedding the browser's speech recognition API so it fits cleanly into my existing utilities and Feynman workflow
 - **Files:** `FeynmanPages/feynmannotes-html.php`, `FeynmanPages/feynmannotes.js`
 
-#### 9. **Backend CRUD Operations** (50% AI, 50% Me)
-- **My Contribution:** 50%
+#### 9. **Backend CRUD Operations** (60% AI, 40% Me)
+- **My Contribution:** 40%
 - **Process:**
   - Described what functionality was needed
   - Cursor generated the PHP code
   - I researched and understood all generated code
   - Tested all endpoints to ensure backend works correctly
   - Modified code as needed for project requirements
-- **AI Assistance:** ~50% - Generated CRUD endpoints based on my descriptions
+- **AI Assistance:** ~60% - Generated CRUD endpoints based on my descriptions
 - **My Contribution:** Requirements definition, testing, understanding, modification
 - **Files:** 
   - `Tasks/create_task.php`, `Tasks/get_tasks.php`, `Tasks/update_task.php`, `Tasks/delete_task.php`
@@ -153,25 +154,26 @@ I took a **research-driven, learning-focused approach** to development:
   - Cursor-generated JavaScript code
   - I researched and understood all code
   - Tested and modified as needed
-- **AI Assistance:** ~70% - Generated JS based on my descriptions
+- **AI Assistance:** ~70% - Generated JS based on my descriptions and later refactored/improved with me (timer accuracy, Feynman auto-save, task flows, and session keep-alive integration)
 - **Exceptions (based on YouTube videos, Lab Project and Team Project):**
-  - `LoginAndSignUpPages/loginandsignup.js` - 90% me (YouTube + lab concepts)
-  - `PomodoroPages/pomodoro.js` - 90% me (YouTube tutorial)
+  - `LoginAndSignUpPages/loginandsignup.js` - predominantly me (YouTube + lab concepts)
+  - `PomodoroPages/pomodoro.js` - started from YouTube tutorial and my logic, later significantly refined with AI (state model, modals, redirect to Feynman)
 - **Files:** 
   - `Analytics/lockinanalytics.js` 
   - `History/history.js` 
   - `FeynmanPages/feynmannotes.js` 
   - `User/profile.js` 
 
-#### 11. **Shared Utilities** (50% AI, 50% Me)
+#### 11. **Shared Utilities & Keep-Alive** (50% AI, 50% Me)
 - **My Contribution:** 50%
 - **Process:**
   - Identified need for code reuse (my initiative)
-  - Asked Cursor to create shared utilities
+  - Asked Cursor to create shared utilities, I created the folder
   - Borrowed SweetAlert concepts from team project (learned from Wendy)
-  - Integrated across entire codebase
-- **AI Assistance:** ~50% - Created `apiRequest()` and `SwalAlert` wrapper
-- **Files:** `SharedUtilities/utils.js`, `SharedUtilities/utils-css.php`
+- I also realised the PHP session could expire during long Pomodoro or notes sessions, causing "Not authenticated" errors and this read on this behaviour led me to ask Cursor how to keep the session alive without bothering the user an I found the solution together with AI after reading about it.
+  - Integrated across entire codebase and connected them to real flows
+- **AI Assistance:** ~50% - Created `apiRequest()`, `SwalAlert` wrapper, and the `startSessionKeepAlive` / `sendKeepAlive` pattern so PHP sessions stay alive during long Pomodoro and notes sessions
+- **Files:** `SharedUtilities/utils.js`, `SharedUtilities/utils-css.php`, `Authentication/keep_alive.php`
 
 #### 12. **Navigation Bar** (40% AI, 60% Me)
 - **My Contribution:** 60%
@@ -279,7 +281,24 @@ I took a **research-driven, learning-focused approach** to development:
 - Implemented 1-minute auto-stop feature
 - Integrated error handling for browser compatibility and HTTPS requirements
 
-**Extent of Use:** 50% AI (API integration guidance error handling and styling), 50% Me (guiding the styling and visual feedback, testing, refinement)
+**Extent of Use:** 50% AI (API integration guidance, error handling and styling), 50% Me (guiding the styling and visual feedback, testing, refinement)
+
+---
+
+### Example 6: Session Keep-Alive – Long-Session Stability
+**Date:** 16/12/2025  
+**Prompt:** "How do I prevent the PHP session from expiring during long Pomodoro or notes sessions?"
+
+**Process:**
+1. I noticed that long focus sessions could potentially cause session timeouts and “Not authenticated” errors. I read about PHP session behavior and also using the experience with phpMyAdmin where it kept logging me out after some time of inactivity.
+2. I then asked AI how to keep the session alive without bothering the user in my system after reading about the possible solutions.
+3. AI suggested a small keep-alive endpoint plus a periodic silent `fetch` from the frontend.
+4. We implemented `startSessionKeepAlive()` and `sendKeepAlive()` in `SharedUtilities/utils.js` that ping `Authentication/keep_alive.php` every few minutes.
+5. I integrated this into `PomodoroPages/pomodoro.js` so that the timer automatically keeps the user logged in while they are working.
+
+**Extent of Use:**
+- **AI:** Designed the keep-alive pattern and helped write the initial code.
+- **Me:** Decided where and when to call it, integrated it into the timer flow, and verified it worked in my environment.
 
 ---
 
@@ -291,6 +310,8 @@ I took a **research-driven, learning-focused approach** to development:
 - **Feynman Notes Div Style (Same video on Login. I also watched a couple of videos on this channel):** https://youtu.be/bVl5_UdcAy0?si=j7mVIzepHiI-kmtR
 - **Web Speech API / Voice Input Concept (1):** https://youtu.be/4eIRrowvLRk?si=hIyKFH3VDGvFAILg
 - **Web Speech API / Voice Input Concept (2):** https://youtu.be/3OnMBtOyGkY?si=Gcnjy1p31C8PULrY
+- **PHP Page Refresh Techniques (header/meta/JS):** `https://www.geeksforgeeks.org/php/refresh-a-page-using-php/`
+- **PHP `session_reset()` Manual Reference:** `https://www.php.net/manual/en/function.session-reset.php`
 
 ### Lab Exercises & Team Projects
 - **Register/Login PHP:** Borrowed concepts and code from class lab
@@ -302,7 +323,6 @@ I took a **research-driven, learning-focused approach** to development:
 ### Design References
 - **Pomodoro App Screenshots:** Folder with screenshots of different app designs `DesignInspiration`
 - **Visual Planning:** Sketches in notebook (attached in write-up)
-
 ### Project Progression Documentation
 - **Initial Codebase:** Folder containing project progression over weeks, showing incremental development (to be uploaded as a zip folder)
 - **Purpose:** Demonstrates the evolution of the project and my learning process over time
@@ -366,11 +386,11 @@ I took a **research-driven, learning-focused approach** to development:
 
 ```php
 // Connection/connection.php
-// Me: 80% - Implemented independently, borrowed lab concepts
+// Me: 80% - Implemented independently, use lab code which was done indepently with the help of Hutton earlier in the semester.
 // AI: 20% - Minor improvements over time
 
 // Authentication/login.php, register.php
-// Me: 80% - YouTube tutorials + lab concepts
+// Me: 80% - YouTube tutorials + lab concepts and code
 // AI: 20% - Code organization
 
 // PomodoroPages/pomodoro.js
@@ -411,7 +431,7 @@ I, Stephanie Klenam Klomegah, developed the LockIn application as my final proje
 
 ### AI Assistance
 
-AI tools (Cursor AI) were used as a **development aid** for:
+AI tool (Cursor AI) were used as a **development aid** for:
 
 - **Code Generation:** Generating CRUD operations and JavaScript based on my functional descriptions (~50% of backend, ~70% of JS, with exceptions for login/signup and Pomodoro which are 90% me)
 - **Styling:** Generating initial CSS based on reference images I provided (~50% of styling for analytics, profile, modal, and history pages)
@@ -445,21 +465,21 @@ The use of AI was a learning tool that helped me understand implementation patte
 | Component | My % | AI % | Learning Resources | Notes |
 |-----------|------|------|-------------------|-------|
 | Planning & Architecture | 100% | 0% | Class (MVC) | Sketches, folder organization |
-| Database Design | 90% | 10% | Independent | Cursor provided optimizations |
+| Database Design | 50% | 50% | Independent | Cursor helped refine Feynman, drafts, tasks, and session links |
 | Connection & Auth | 80% | 20% | YouTube + Lab | Borrowed lab concepts |
 | Account Activation | 70% | 30% | Research (PHPMailer) | I developed final solution |
-| Pomodoro Timer | 85% | 15% | YouTube | Core logic independent |
+| Pomodoro Timer | 70% | 30% | YouTube + AI refactors | Core idea from me, later refined with AI (state, modals, redirects) |
 | Styling & UI | 50% | 50% | Reference images | Heavily customized (analytics, profile, modal, history) |
 | Login/Signup Pages | 90% | 10% | YouTube + Lab + Team Project | Borrowed code, I built team interface, so I just repurposed some parts|
 | Feynman Notes | 60% | 40% | YouTube (layout + Web Speech API concept) | Three-step notes + optional voice input integration |
 | Backend CRUD | 50% | 50% | Research | Described needs, understood code |
-| JavaScript (Most) | 30% | 70% | Research | Described needs, understood code |
-| JavaScript (Exceptions) | 90% | 10% | YouTube + Lab + Team | Login/signup & Pomodoro |
-| Shared Utilities | 50% | 50% | Team project (SweetAlert from Wendy) | Integration & customization |
+| JavaScript (Most) | 50% | 50% | Research | Described needs, understood code and refactored with AI |
+| JavaScript (Exceptions) | 80% | 20% | YouTube + Lab + Team | Login/signup & original Pomodoro logic, later AI‑aided improvements |
+| Shared Utilities & Keep-Alive | 50% | 50% | Team project (SweetAlert from Wendy) | Integration, customization, and placement in flows |
 | Navigation Bar | 60% | 40% | Independent | Designed structure |
 | Testing | 100% | 0% | Independent | All testing by me |
 | Documentation | 100% | 0% | My knowledge | I provided all content |
-| **Overall Project** | **~65%** | **~35%** | **Multiple sources** | **Strong initiative** |
+| **Overall Project** | **~65%** | **~35%** | **Multiple sources** | **Balanced human + AI collaboration** |
 
 ---
 
@@ -483,7 +503,7 @@ I, Stephanie Klenam Klomegah, declare that:
 
 - The project concept, design, architecture, and planning are my original work
 - I took significant initiative in learning, research, and problem-solving throughout the development process
-- AI was used as a development tool to generate code based on my descriptions, which were informed by my understanding of concepts taught in class
+- AI was used as a development tool to generate code based on my descriptions, which were informed by my understanding of concepts taught in class and other educational resources
 - All AI-generated code was researched, understood, tested, and modified by me
 - I am responsible for all code in the final project
 - Educational resources (YouTube tutorials, lab exercises, team projects) were used for learning foundational concepts
@@ -493,5 +513,4 @@ I, Stephanie Klenam Klomegah, declare that:
 **Date:** 15/12/2025
 
 **Project:** LockIn - Final Project
-
 ---
