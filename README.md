@@ -50,7 +50,7 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 - **PHP** - Server-side logic
 - **MySQL** - Database
 ### Frontend
-- **HTML5** - Structure
+- **HTML** - Structure
 - **CSS** - Styling 
 - **JavaScript** - Client-side logic
 - **Chart.js** - Data visualization
@@ -60,7 +60,6 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 - **RESTful API** design
 - **Session-based authentication**
 - **Feature-based folder organization**
-- **Separation of concerns** (UI vs. API)
 
 ---
 
@@ -80,24 +79,25 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 ### 1. **Create an Account**
    - Click "Sign Up" on the landing page
    - Fill in your information
-   - Activate your account using the provided token
+   - Activate your account and log in.
 
 ### 2. **Start a Pomodoro Session**
-   - Log in and navigate to the Pomodoro timer
+   - Once logged in, navigate to the Pomodoro timer
    - Add tasks you want to complete
    - Select timer mode (Pomodoro, Short Break, Long Break)
    - Click "START" and focus for 25 minutes
 
 ### 3. **Reflect with Feynman Notes**
-   - After completing a session, you'll be redirected to Feynman notes
-   - Write your initial explanation (or click the mic icon to speak and let the app transcribe for you - **Note:** Voice input only appears on HTTPS or localhost due to browser security requirements)
+   - After completing a session, you'll be asked to head to reflect.
+   - Write your initial explanation
+     (or click the mic icon to speak and let the app transcribe for you - **Note:** Voice input only appears on HTTPS or localhost due to browser security requirements, so it is not working currently on the live website. I plan to migrate this to another server in the future. )
    - Simplify it in your own words, editing the text to make it clearer
    - Extract key concepts to reinforce what you just explained
    - Click "Save" to store your reflection
 
 ### 4. **Track Your Progress**
    - Visit **Analytics** to see charts and statistics
-   - Check **History** to review past sessions
+   - Check **History** to review past sessions and view notes.
    - View your profile to manage account settings
 
 ---
@@ -153,7 +153,7 @@ All API endpoints follow RESTful conventions:
 
 ## Extra Documentation Folders
 
- This folder `ExtraDocumentation` contains some screenshots of progress and sub-folders of initial iterations and planning materials (screenshots of other Pomodoro websites I wanted to emulate, particularly the styling) in `ProgressFolder` and `DesignInspiration` respectively.
+ This folder `ExtraDocumentation` contains some screenshots of progress and sub-folders of initial iterations and planning materials (screenshots of other Pomodoro websites I wanted to emulate, particularly the styling) in `ProgressFolder` and `DesignInspiration`, respectively.
 
 ---
 
@@ -161,7 +161,7 @@ All API endpoints follow RESTful conventions:
 
 ### Voice Input Feature
 - **Requires:** HTTPS or localhost (browser security requirement for Web Speech API)
-- **Behavior on HTTP:** Voice input buttons are automatically hidden to prevent confusion. Typing remains fully functional.
+- **Behavior on HTTP:** Voice input buttons are automatically hidden to prevent confusion. Typing remains fully functional and the school server is HTTP, thus the mic is not available.
 - **Behavior on HTTPS/localhost:** Voice input buttons appear and function normally.
 - **Why:** Modern browsers require secure contexts (HTTPS) for microphone access to protect user privacy. This is a browser security feature, not a limitation of the application.
 
@@ -180,7 +180,7 @@ To test the voice input feature:
 - Timer settings are fixed (customizable durations planned)
 - No background music feature (planned for future)
 - Analytics data cannot be exported (planned for future)
-- Database not optimized for large datasets and scalability (currently sufficient for small user base)
+- Database not optimized for large datasets and scalability (currently sufficient for a small user base)
 - Voice input not available on HTTP servers (browser security requirement - works on localhost/HTTPS)
 
 ### Planned Features
@@ -189,5 +189,6 @@ To test the voice input feature:
 - Background music/ambient sounds
 - Export analytics data
 - Mobile app version
+  
 
 
