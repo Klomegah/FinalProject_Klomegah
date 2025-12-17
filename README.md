@@ -50,7 +50,7 @@ Live site: http://169.239.251.102:341/~stephanie.klomegah/FinalProject_Klomegah
 - **PHP** - Server-side logic
 - **MySQL** - Database
 ### Frontend
-- **HTML5** - Structure
+- **HTML** - Structure
 - **CSS** - Styling 
 - **JavaScript** - Client-side logic
 - **Chart.js** - Data visualization
