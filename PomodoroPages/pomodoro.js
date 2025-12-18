@@ -762,35 +762,51 @@ async function saveSessionToDatabase() {
     
     const sessionData = {
         session_date: localDateString, // Send local time as formatted string
+        duration: timerState.defaultTime, // Duration in seconds ( 1500 for 25 minutes)
         mode: 'pomodoro',
         tasks: tasks.filter(t => !t.completed).map(t => t.text),
         completed_tasks: tasks.filter(t => t.completed).map(t => t.text)
     };
     
+    console.log('Saving session with data:', sessionData);
+    
     const result = await apiRequest('../Sessions/create_session.php', {
-            method: 'POST',
+        method: 'POST',
         body: sessionData
     });
     
-    if (result.success && result.data.success) {
-            // Store session ID for use in Feynman notes
+    console.log('Session save result:', result);
+    
+    if (result.success && result.data && result.data.success) {
+        // Store session ID for use in Feynman notes
         currentSessionId = result.data.session_id.toString();
-            
-            // Also store in localStorage for Feynman notes compatibility 
-            const sessionForNotes = {
-                sessionId: currentSessionId,
-                date: sessionData.session_date,
-                tasks: sessionData.tasks,
-                completedTasks: sessionData.completed_tasks
-            };
-            localStorage.setItem('currentSession', JSON.stringify(sessionForNotes));
-            
-            // Show modal asking if they want to continue or proceed to Feynman notes
-            showSessionCompleteModal();
-        } else {
-        const errorMsg = result.error || result.data?.error || 'Unknown error';
+        
+        console.log('Session saved successfully! ID:', currentSessionId);
+        
+        // Also store in localStorage for Feynman notes compatibility 
+        const sessionForNotes = {
+            sessionId: currentSessionId,
+            date: sessionData.session_date,
+            tasks: sessionData.tasks,
+            completedTasks: sessionData.completed_tasks
+        };
+        localStorage.setItem('currentSession', JSON.stringify(sessionForNotes));
+        
+        // Show modal asking if they want to continue or proceed to Feynman notes
+        showSessionCompleteModal();
+    } else {
+        const errorMsg = result.error || (result.data && result.data.error) || 'Unknown error';
         const dbError = result.data?.db_error ? ` Database error: ${result.data.db_error}` : '';
-        SwalAlert.error('Failed to Save Session', `${errorMsg}${dbError}`);
+        const receivedData = result.data?.received_data ? ` Received: ${JSON.stringify(result.data.received_data)}` : '';
+        
+        console.error('Failed to save session:', {
+            result: result,
+            error: errorMsg,
+            dbError: dbError,
+            receivedData: receivedData
+        });
+        
+        SwalAlert.error('Failed to Save Session', `${errorMsg}${dbError}${receivedData}`);
 
         // Still show modal even if save failed
         showSessionCompleteModal();
