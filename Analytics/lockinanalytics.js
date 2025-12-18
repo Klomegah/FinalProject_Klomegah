@@ -26,10 +26,12 @@ async function loadAnalytics() {
         const data = await response.json();
         
         console.log('Analytics data received:', data);
+        console.log('Number of sessions in response:', data.sessions ? data.sessions.length : 0);
         
         if (data.success && data.sessions && data.sessions.length > 0) {
             allSessions = data.sessions;
-            console.log('Displaying stats for', data.sessions.length, 'sessions');
+            console.log('Stored', allSessions.length, 'sessions in allSessions array');
+            console.log('Session dates:', allSessions.map(s => s.session_date).slice(0, 5)); // Show first 5 dates
             applyFilter(currentPeriod);
             
             // Load Feynman notes stats
@@ -144,14 +146,18 @@ function applyFilter(period) {
 function displayStats(sessions) {
     console.log('Sessions data:', sessions); // Debug log
     
-    // Calculate statistics
-    const totalSessions = sessions.length;
-    const totalMinutes = sessions.reduce((sum, s) => sum + (s.duration / 60), 0);
+    // Filter to only Pomodoro sessions (exclude breaks)
+    const pomodoroSessions = sessions.filter(s => s.mode === 'pomodoro');
+    console.log('Pomodoro sessions:', pomodoroSessions.length, 'out of', sessions.length, 'total sessions');
+    
+    // Calculate statistics (only for Pomodoro sessions)
+    const totalSessions = pomodoroSessions.length;
+    const totalMinutes = pomodoroSessions.reduce((sum, s) => sum + (s.duration / 60), 0);
     const totalHours = Math.floor(totalMinutes / 60);
     const remainingMinutes = Math.floor(totalMinutes % 60);
     
-    // Count completed tasks - handle both string and array formats
-    const completedTasks = sessions.reduce((sum, s) => {
+    // Count completed tasks - handle both string and array formats (only Pomodoro sessions)
+    const completedTasks = pomodoroSessions.reduce((sum, s) => {
         if (!s.completed_tasks) return sum;
         
         // If it's a string (JSON), parse it
@@ -180,7 +186,7 @@ function displayStats(sessions) {
     document.getElementById('total-sessions').textContent = totalSessions;
     document.getElementById('total-hours').textContent = `${totalHours}h ${remainingMinutes}m`;
     document.getElementById('completion-rate').textContent = completedTasks;
-    document.getElementById('current-streak').textContent = calculateStreak(sessions);
+    document.getElementById('current-streak').textContent = calculateStreak(pomodoroSessions);
 }
 
 function calculateStreak(sessions) {
@@ -190,22 +196,36 @@ function calculateStreak(sessions) {
     const pomodoroSessions = sessions.filter(s => s.mode === 'pomodoro');
     if (pomodoroSessions.length === 0) return 0;
     
-    // Get unique dates (as date strings) from sessions
+    // Get unique dates (as date strings) from sessions - handle timezone properly
     const sessionDates = new Set();
     pomodoroSessions.forEach(session => {
+        // Parse the session date - handle both UTC and local time
         const sessionDate = new Date(session.session_date);
-        sessionDate.setHours(0, 0, 0, 0);
-        const dateString = sessionDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+        // Convert to local date string (YYYY-MM-DD) to avoid timezone issues
+        const year = sessionDate.getFullYear();
+        const month = String(sessionDate.getMonth() + 1).padStart(2, '0');
+        const day = String(sessionDate.getDate()).padStart(2, '0');
+        const dateString = `${year}-${month}-${day}`;
         sessionDates.add(dateString);
     });
     
-    // Start from today and count backwards
-    let streak = 0;
-    let checkDate = new Date();
-    checkDate.setHours(0, 0, 0, 0);
+    // Start from today (local time) and count backwards
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayYear = today.getFullYear();
+    const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
+    const todayDay = String(today.getDate()).padStart(2, '0');
+    const todayString = `${todayYear}-${todayMonth}-${todayDay}`;
     
+    let streak = 0;
+    let checkDate = new Date(today);
+    
+    // Count consecutive days backwards from today
     while (true) {
-        const dateString = checkDate.toISOString().split('T')[0];
+        const year = checkDate.getFullYear();
+        const month = String(checkDate.getMonth() + 1).padStart(2, '0');
+        const day = String(checkDate.getDate()).padStart(2, '0');
+        const dateString = `${year}-${month}-${day}`;
         
         if (sessionDates.has(dateString)) {
             streak++;
@@ -238,20 +258,32 @@ function createCharts(sessions) {
         timeChart.destroy();
     }
     
-    // Group sessions by date
+    // Group sessions by date (only Pomodoro sessions for charts)
+    const pomodoroSessions = sessions.filter(s => s.mode === 'pomodoro');
     const sessionsByDate = {};
-    sessions.forEach(session => {
-        const date = new Date(session.session_date).toLocaleDateString();
-        if (!sessionsByDate[date]) {
-            sessionsByDate[date] = { count: 0, duration: 0 };
+    pomodoroSessions.forEach(session => {
+        // Use consistent date format (YYYY-MM-DD) for proper sorting
+        const sessionDate = new Date(session.session_date);
+        const year = sessionDate.getFullYear();
+        const month = String(sessionDate.getMonth() + 1).padStart(2, '0');
+        const day = String(sessionDate.getDate()).padStart(2, '0');
+        const dateKey = `${year}-${month}-${day}`;
+        
+        // For display, use locale date string
+        const dateDisplay = sessionDate.toLocaleDateString();
+        
+        if (!sessionsByDate[dateKey]) {
+            sessionsByDate[dateKey] = { count: 0, duration: 0, displayDate: dateDisplay };
         }
-        sessionsByDate[date].count++;
-        sessionsByDate[date].duration += session.duration / 60;
+        sessionsByDate[dateKey].count++;
+        sessionsByDate[dateKey].duration += session.duration / 60;
     });
     
-    const dates = Object.keys(sessionsByDate).sort((a, b) => new Date(a) - new Date(b));
-    const sessionCounts = dates.map(date => sessionsByDate[date].count);
-    const sessionDurations = dates.map(date => Math.floor(sessionsByDate[date].duration));
+    // Sort by date key (YYYY-MM-DD format ensures proper chronological sorting)
+    const dateKeys = Object.keys(sessionsByDate).sort();
+    const dates = dateKeys.map(key => sessionsByDate[key].displayDate);
+    const sessionCounts = dateKeys.map(key => sessionsByDate[key].count);
+    const sessionDurations = dateKeys.map(key => Math.floor(sessionsByDate[key].duration));
     
     console.log('Chart data:', { dates, sessionCounts, sessionDurations });
     

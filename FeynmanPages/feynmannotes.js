@@ -8,10 +8,23 @@ let sessionId = null;
 // or from localStorage (if coming directly from timer)
 const urlParams = new URLSearchParams(window.location.search);
 const sessionIdFromUrl = urlParams.get('session_id');
-const sessionFromStorage = JSON.parse(localStorage.getItem('currentSession') || '{}');
 
-// Use URL parameter if available, otherwise use the one from localStorage
-sessionId = sessionIdFromUrl || sessionFromStorage.sessionId;
+// If URL has session_id, use it (most reliable - doesn't change)
+// Otherwise, try localStorage, but only if we don't already have a sessionId in the URL
+if (sessionIdFromUrl) {
+    sessionId = sessionIdFromUrl;
+} else {
+    const sessionFromStorage = JSON.parse(localStorage.getItem('currentSession') || '{}');
+    sessionId = sessionFromStorage.sessionId;
+    
+    // If we got sessionId from localStorage, also add it to URL to preserve it
+    // This prevents the page from switching to a different session if localStorage gets updated
+    if (sessionId && !sessionIdFromUrl) {
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('session_id', sessionId);
+        window.history.replaceState({}, '', newUrl);
+    }
+}
 
 // ------- OPTIONAL VOICE INPUT (WEB SPEECH API) FOR NOTES ---------
 // This section wires up the browser's speech recognition so users can dictate
@@ -191,8 +204,19 @@ async function initializePage() {
       
 
         // Show when the session happened and how long it was
+        // Parse date properly to avoid timezone issues
         const sessionDate = new Date(currentSession.session_date);
-        document.getElementById('session-date').textContent = sessionDate.toLocaleString();
+        // Format date in local timezone properly
+        const options = { 
+            year: 'numeric', 
+            month: '2-digit', 
+            day: '2-digit', 
+            hour: '2-digit', 
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        };
+        document.getElementById('session-date').textContent = sessionDate.toLocaleString('en-US', options);
         document.getElementById('session-duration').textContent = Math.floor(currentSession.duration / 60);
 
     } else {
@@ -303,9 +327,15 @@ async function saveNotes() {
             btn.disabled = false;
         }, 2000);
       
+        // Ensure session ID is preserved in URL after saving
+        // This prevents the page from switching to a different session
+        if (sessionId) {
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('session_id', sessionId);
+            window.history.replaceState({}, '', newUrl);
+        }
 
         // Ask user if they want to go back to the timer
-
         setTimeout(async () => {
             const confirmResult = await SwalAlert.confirm('Notes Saved!', 'Return to timer?');
             if (confirmResult.isConfirmed) {
