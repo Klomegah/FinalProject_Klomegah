@@ -186,24 +186,33 @@ function displayStats(sessions) {
 function calculateStreak(sessions) {
     if (!sessions || sessions.length === 0) return 0;
     
-    // Sort sessions by date (newest first)
-    const sortedSessions = sessions.sort((a, b) => 
-        new Date(b.session_date) - new Date(a.session_date)
-    );
+    // Filter to only Pomodoro sessions (not breaks)
+    const pomodoroSessions = sessions.filter(s => s.mode === 'pomodoro');
+    if (pomodoroSessions.length === 0) return 0;
     
-    let streak = 0;
-    let currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    
-    for (const session of sortedSessions) {
+    // Get unique dates (as date strings) from sessions
+    const sessionDates = new Set();
+    pomodoroSessions.forEach(session => {
         const sessionDate = new Date(session.session_date);
         sessionDate.setHours(0, 0, 0, 0);
+        const dateString = sessionDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+        sessionDates.add(dateString);
+    });
+    
+    // Start from today and count backwards
+    let streak = 0;
+    let checkDate = new Date();
+    checkDate.setHours(0, 0, 0, 0);
+    
+    while (true) {
+        const dateString = checkDate.toISOString().split('T')[0];
         
-        const daysDiff = Math.floor((currentDate - sessionDate) / (1000 * 60 * 60 * 24));
-        
-        if (daysDiff === streak) {
+        if (sessionDates.has(dateString)) {
             streak++;
-        } else if (daysDiff > streak) {
+            // Move to previous day
+            checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+            // No session on this day - streak is broken
             break;
         }
     }
