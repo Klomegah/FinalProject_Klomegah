@@ -1,5 +1,3 @@
-console.log('Analytics script loaded!');
-
 let allSessions = [];
 let currentPeriod = 'all';
 let sessionsChart = null;
@@ -13,7 +11,7 @@ async function loadAnalytics() {
     try {
         console.log('Fetching sessions from API...');
         
-        // Changed back to get_sessions.php
+        // Get all sessions from the database
         const response = await fetch('../Sessions/get_sessions_stats.php', {
             method: 'GET',
             headers: {
@@ -47,7 +45,7 @@ async function loadAnalytics() {
 
 // Load Feynman Notes statistics
 async function loadNotesStats() {
-    console.log('Loading notes stats...'); // Add this debug log
+    console.log('Loading notes stats...'); // debug log
     
     try {
         const response = await fetch('../Notes/get_notes_stats.php', {
@@ -59,11 +57,11 @@ async function loadNotesStats() {
             credentials: 'same-origin'
         });
 
-        console.log('Notes stats response:', response.status); // Add this
+        console.log('Notes stats response:', response.status); // Debug log
         
         const data = await response.json();
         
-        console.log('Notes stats data:', data); // Add this
+        console.log('Notes stats data:', data); // Debug log
         
         if (data.success && data.stats) {
             displayNotesStats(data.stats);
@@ -122,6 +120,7 @@ function applyFilter(period) {
         displayStats(filteredSessions);
         createCharts(filteredSessions);
     } else {
+        
         // Clear stats
         document.getElementById('total-sessions').textContent = '0';
         document.getElementById('total-hours').textContent = '0h 0m';

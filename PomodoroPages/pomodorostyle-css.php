@@ -258,7 +258,7 @@ body {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    flex: 1; /* Take available space, similar to tasks-list */
+    flex: 1; 
     min-height: 0;
 }
 
